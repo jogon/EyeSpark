@@ -27,6 +27,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GTSettings", "GTSettings\GT
 EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "GTSetupMergeModule", "GTSetupMergeModule\GTSetupMergeModule.vdproj", "{B6462BA1-FCE5-4D42-906F-45377AAD9E2F}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{06BCEC4D-7440-4620-94DC-69A23ADDB24F}"
+	ProjectSection(SolutionItems) = preProject
+		VS_README.txt = VS_README.txt
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

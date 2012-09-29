@@ -1,0 +1,1 @@
+Don't just hit debug on the top layer.  Compile, then run the application from the debug folder.
