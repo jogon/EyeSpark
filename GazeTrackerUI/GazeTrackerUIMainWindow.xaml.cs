@@ -951,5 +951,15 @@ namespace GazeTrackerUI
     }
 
     #endregion
+
+    private void BtnKeyBoard_Action(object sender, RoutedEventArgs e)
+    {
+
+    }
+
+    private void BtnStartStop_Action(object sender, RoutedEventArgs e)
+    {
+
+    }
   }
 }
