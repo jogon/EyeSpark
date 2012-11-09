@@ -1,5 +1,3 @@
 EyeSpark
 ========
-
-TO DO
-Test - Alex
+EyeSpark brings to users a new and innovative way of interacting with computers. It allows users to control their mouse and keyboard with only their eyes and head. EyeSpark consists of a head mounted device and an application running on the users computer. The head mounted device tracks eye and head movements and sends the information to the user's PC via USB. The EyeSpark application captures this information and uses it to create the mapping of eye and head gestures to mouse and keystrokes. Users can fully customize the mappings and tie them to specific applications, allowing EyeSpark to work with a variety of applications.
