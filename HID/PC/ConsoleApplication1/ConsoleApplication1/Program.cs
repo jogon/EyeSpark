@@ -22,7 +22,7 @@ namespace ConsoleApplication1
 
             usb.Connect();
 
-            usb.enableUsbBufferEvent(new System.EventHandler(myEventCacher));
+           // usb.enableUsbBufferEvent(new System.EventHandler(myEventCacher));
 
             Thread.Sleep(5);
 
