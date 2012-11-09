@@ -1,0 +1,837 @@
+/*
+   LUFA Library
+   Copyright (C) Dean Camera, 2012.
+
+   dean [at] fourwalledcubicle [dot] com
+   www.lufa-lib.org
+   */
+
+/*
+   Copyright 2012  Dean Camera (dean [at] fourwalledcubicle [dot] com)
+
+   Permission to use, copy, modify, distribute, and sell this
+   software and its documentation for any purpose is hereby granted
+   without fee, provided that the above copyright notice appear in
+   all copies and that both that the copyright notice and this
+   permission notice and warranty disclaimer appear in supporting
+   documentation, and that the name of the author not be used in
+   advertising or publicity pertaining to distribution of the
+   software without specific, written prior permission.
+
+   The author disclaim all warranties with regard to this
+   software, including all implied warranties of merchantability
+   and fitness.  In no event shall the author be liable for any
+   special, indirect or consequential damages or any damages
+   whatsoever resulting from loss of use, data or profits, whether
+   in an action of contract, negligence or other tortious action,
+   arising out of or in connection with the use or performance of
+   this software.
+   */
+
+/** \file
+ *
+ *  Main source file for the VirtualSerial demo. This file contains the main tasks of
+ *  the demo and is responsible for the initial application hardware configuration.
+ *
+ *  Modified by Sparkfun 5/31/12 by Jordan McConnell
+ *  The purpose of this to be a simple demo of how to send serial information
+ *  between your 32u4 Breakout Board and computer using USB as a virtual COM port.
+ *
+ *  The first time this is run, Windows will want a driver, point it to the
+ *  file: 'LUFA VirtualSerial.inf' in this directory.  Now your board will have
+ *  two COM ports associated with your 32u4 board, one for the bootloader, and
+ *  one for your applications that involve serial communication to the PC.
+ *
+ *  Two examples are included.  By default, this program once loaded on the
+ *  board will accept information from the computer via USB and the virtual COM
+ *  port, put it into a buffer and then send it straight back to the user.
+ *
+ *  If the default example is commented out and the second is uncommented, a
+ *  simple print statement to the computer happens about every couple seconds.
+ */
+
+
+#include <stdlib.h>
+#include <stdio.h>
+#include <avr/io.h>
+#include <avr/pgmspace.h>
+#include "types.h"
+#include "defs.h"
+#include "i2c.h"
+
+#include "VirtualSerial.h"
+#include <util/delay.h>
+
+#define sbi(var, mask)   ((var) |= (uint8_t)(1 << mask))
+#define cbi(var, mask)   ((var) &= (uint8_t)~(1 << mask))
+#define ITG3205_R 0xD1	// ADD pin is pulled low
+#define ITG3205_W 0xD0 
+
+///============Initialize Prototypes=====//////////////////
+void init(void);
+unsigned int UART_Init(unsigned int ubrr);
+uint8_t uart_getchar(void);
+//static int uart_putchar(char c, FILE *stream);
+//static FILE mystdout = FDEV_SETUP_STREAM(uart_putchar, NULL, _FDEV_SETUP_WRITE);
+void i2cInit(void);
+
+///============Function Prototypes=========/////////////////
+void accelerometer_init(void);
+void auto_raw(void);
+void baud_menu(void);
+void check_baud(void);
+void config_menu(void);
+void config_read(void);
+void gyro_init(void);
+void help(void);
+void magnetometer(void);
+void magnetometer_init(void);
+void print_adxl345(void);
+void print_hmc5883(void);
+void print_itg3205(void);
+void raw(void);
+void self_test(void);
+uint16_t x_accel(void);
+uint16_t y_accel(void);
+uint16_t z_accel(void);
+uint16_t x_gyro(void);
+uint16_t y_gyro(void);
+uint16_t z_gyro(void);
+
+///============EEPROM Protoypes============//////////////////
+void write_to_EEPROM(unsigned int Address, unsigned char Data);
+unsigned char read_from_EEPROM(unsigned int Address);
+
+///============Display Strings============//////////////////
+const char wlcm_str[] PROGMEM = "\n\n\r9DOF IMU Firmware v22 \n\r==========================";
+const char accel[] PROGMEM = "\n\r[1]Accelerometer: ADXL345 \n\r";
+const char mag[] PROGMEM = "[2]Magnetometer: HMC5883 \n\r";
+const char gyro[] PROGMEM = "[3]Gyroscope: ITG-3205 \n\r";
+const char raw_out[] PROGMEM = "[4]Raw Output\n\r";
+const char baud_change[] PROGMEM = "[5]Change Baud Rate: ";
+const char autorun[] PROGMEM = "[Ctrl+z]Toggle Autorun\n\r";
+const char help_[] PROGMEM = "[?]Help\n\r";
+
+
+/** LUFA CDC Class driver interface configuration and state information. This structure is
+ *  passed to all CDC Class driver functions, so that multiple instances of the same class
+ *  within a device can be differentiated from one another.
+ */
+USB_ClassInfo_CDC_Device_t VirtualSerial_CDC_Interface =
+{
+	.Config =
+	{
+		.ControlInterfaceNumber         = 0,
+
+		.DataINEndpointNumber           = CDC_TX_EPNUM,
+		.DataINEndpointSize             = CDC_TXRX_EPSIZE,
+		.DataINEndpointDoubleBank       = false,
+
+		.DataOUTEndpointNumber          = CDC_RX_EPNUM,
+		.DataOUTEndpointSize            = CDC_TXRX_EPSIZE,
+		.DataOUTEndpointDoubleBank      = false,
+
+		.NotificationEndpointNumber     = CDC_NOTIFICATION_EPNUM,
+		.NotificationEndpointSize       = CDC_NOTIFICATION_EPSIZE,
+		.NotificationEndpointDoubleBank = false,
+	},
+};
+
+/** Standard file stream for the CDC interface when set up, so that the virtual CDC COM port can be
+ *  used like any regular character stream in the C APIs
+ */
+static FILE USBSerialStream;
+volatile char buffer[CDC_TXRX_EPSIZE];
+
+uint16_t x_mag, y_mag, z_mag; //Magnetometer values
+
+
+/** Main program entry point. This routine contains the overall program flow, including initial
+ *  setup of all components and the main program loop.
+ */
+ 
+int main(void)
+{
+//	char * HelloString  = "Hello from SparkFun. You got it to work, congrats.\n"; // The C style string to send to the computer in example 2
+	
+	// Count keeps track of # of characters in the buffer for the first example
+	// It's used to keep track of milliseconds passed in the second example.
+	uint16_t count = 0;
+
+	SetupHardware();
+	init();
+
+	/* Create a regular character stream for the interface so that it can be used with the stdio.h functions */
+  	CDC_Device_CreateStream(&VirtualSerial_CDC_Interface, &USBSerialStream);
+
+	LEDs_SetAllLEDs(LEDMASK_USB_NOTREADY);
+	sei();
+
+	while(1)
+	{
+
+	    // Ex. 1: Check and read the buffer of characters coming from the computer via USB
+	    // and then send them straight back.
+		/*
+        if ((count = fread(&buffer,1,CDC_TXRX_EPSIZE,&USBSerialStream)) > 0)
+        {
+           fwrite(&buffer, 1, count, &USBSerialStream);
+        }
+		*/
+
+
+        // Ex. 2: The following block of code demonstrates a simple print that is
+        // sent about once each couple seconds.  To use uncomment the following
+        // section and comment out the section above which is constantly taking
+        // user input and putting it back to the screen.
+		
+		
+       
+        count++;
+        if(count >=2000)
+        {
+            count=0;
+       //   fprintf(&USBSerialStream, "%s", HelloString);
+			print_adxl345();
+			print_itg3205();
+			print_hmc5883();
+            _delay_ms(1000);
+        }
+        
+
+        // LUFA USB functions necessary for USB/virtual serial communication to work
+	    CDC_Device_USBTask(&VirtualSerial_CDC_Interface);
+	    USB_USBTask();
+
+    }
+}
+
+/** Configures the board hardware and chip peripherals for the demo's functionality. */
+void SetupHardware(void)
+{
+	/* Disable watchdog if enabled by bootloader/fuses */
+	MCUSR &= ~(1 << WDRF);
+	wdt_disable();
+
+	/* Disable clock division */
+	clock_prescale_set(clock_div_1);
+
+	// Initialize char buffer to all zeroes
+	for(uint8_t i=0; i < CDC_TXRX_EPSIZE; i++)
+	{
+	    buffer[i]=0;
+	}
+
+	/* Hardware Initialization */
+	LEDs_Init();
+	USB_Init();
+}
+
+/** Event handler for the library USB Connection event. */
+void EVENT_USB_Device_Connect(void)
+{
+	LEDs_SetAllLEDs(LEDMASK_USB_ENUMERATING);
+}
+
+/** Event handler for the library USB Disconnection event. */
+void EVENT_USB_Device_Disconnect(void)
+{
+	LEDs_SetAllLEDs(LEDMASK_USB_NOTREADY);
+}
+
+/** Event handler for the library USB Configuration Changed event. */
+void EVENT_USB_Device_ConfigurationChanged(void)
+{
+	bool ConfigSuccess = true;
+
+	ConfigSuccess &= CDC_Device_ConfigureEndpoints(&VirtualSerial_CDC_Interface);
+
+	LEDs_SetAllLEDs(ConfigSuccess ? LEDMASK_USB_READY : LEDMASK_USB_ERROR);
+}
+
+/** Event handler for the library USB Control Request reception event. */
+void EVENT_USB_Device_ControlRequest(void)
+{
+	CDC_Device_ProcessControlRequest(&VirtualSerial_CDC_Interface);
+}
+
+
+
+/**
+	These are the initialization for the three sensors.
+*/
+
+void init (void)
+{
+    //1 = output, 0 = input
+//	DDRB = 0b01100000; //PORTB4, B5 output for stat LED
+  //  DDRC = 0b00010000; //PORTC4 (SDA), PORTC5 (SCL), PORTC all others are inputs
+    DDRD = 0b00000001; //PORTD (TX output on PD1)
+	PORTD = 0b00000011; //pullups on the I2C bus
+	
+//	cbi(PORTB, 5);
+	
+	i2cInit();
+	accelerometer_init();
+	magnetometer_init();
+	gyro_init();
+	
+//	check_baud();
+}
+
+
+/*
+	Accelerometer Stufffff  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	Accelerometer Stufffff  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	Accelerometer Stufffff  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	Accelerometer Stufffff  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	Accelerometer Stufffff  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	Accelerometer Stufffff  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	Accelerometer Stufffff  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	Accelerometer Stufffff  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+*/
+void accelerometer_init(void)
+{
+
+	//initialize
+	i2cSendStart();
+	i2cWaitForComplete();
+	i2cSendByte(0xA6);    //write to ADXL
+	i2cWaitForComplete();
+	i2cSendByte(0x2D);    //power register
+	i2cWaitForComplete();
+	i2cSendByte(0x08);    //measurement mode
+	i2cWaitForComplete();
+	i2cSendStop();
+	
+	i2cSendStart();
+	i2cWaitForComplete();
+	i2cSendByte(0xA6);    //write to ADXL
+	i2cWaitForComplete();
+	i2cSendByte(0x31);    //data format
+	i2cWaitForComplete();
+	i2cSendByte(0x08);    //full resolution antes era 0x08
+	i2cWaitForComplete();
+	i2cSendStop();
+
+}
+
+void print_adxl345(void)
+{	
+	
+	fprintf(&USBSerialStream,"Accelerometer X axis = %4d \n", x_accel());
+	fprintf(&USBSerialStream,"Accelerometer Y axis = %4d \n", y_accel());
+	fprintf(&USBSerialStream,"Accelerometer Z axis = %4d \n", z_accel());
+	fprintf(&USBSerialStream,"\n\r");
+	delay_ms(20);
+}
+
+uint16_t x_accel(void)
+{
+	//0xA6 for a write
+	//0xA7 for a read
+
+	uint8_t dummy, xh, xl;
+	uint16_t xo;
+
+	//0x32 data registers
+	i2cSendStart();
+	i2cWaitForComplete();
+	i2cSendByte(0xA6);    //write to ADXL
+	i2cWaitForComplete();
+	i2cSendByte(0x32);    //X0 data register
+	i2cWaitForComplete();
+	
+	i2cSendStop();		 //repeat start
+	i2cSendStart();
+
+	i2cWaitForComplete();
+	i2cSendByte(0xA7);    //read from ADXL
+	i2cWaitForComplete();
+	i2cReceiveByte(TRUE);
+	i2cWaitForComplete();
+	xl = i2cGetReceivedByte();	//x low byte
+	i2cWaitForComplete();
+	i2cReceiveByte(FALSE);
+	i2cWaitForComplete();
+	dummy = i2cGetReceivedByte();	//must do a multiple byte read?
+	i2cWaitForComplete();
+	i2cSendStop();	
+	
+	//0x33 data registers
+	i2cSendStart();
+	i2cWaitForComplete();
+	i2cSendByte(0xA6);    //write to ADXL
+	i2cWaitForComplete();
+	i2cSendByte(0x33);    //X1 data register
+	i2cWaitForComplete();
+	
+	i2cSendStop();		 //repeat start
+	i2cSendStart();
+
+	i2cWaitForComplete();
+	i2cSendByte(0xA7);    //read from ADXL
+	i2cWaitForComplete();
+	i2cReceiveByte(TRUE);
+	i2cWaitForComplete();
+	xh = i2cGetReceivedByte();	//x high byte
+	i2cWaitForComplete();
+	i2cReceiveByte(FALSE);
+	i2cWaitForComplete();
+	dummy = i2cGetReceivedByte();	//must do a multiple byte read?
+	i2cWaitForComplete();
+	i2cSendStop();
+	xo = xl|(xh << 8);
+	return xo;
+}
+
+uint16_t y_accel(void)
+{		
+	//0xA6 for a write
+	//0xA7 for a read
+	
+	uint8_t dummy, yh, yl;
+	uint16_t yo;
+	
+	//0x34 data registers
+	i2cSendStart();
+	i2cWaitForComplete();
+	i2cSendByte(0xA6);    //write to ADXL
+	i2cWaitForComplete();
+	i2cSendByte(0x34);    //Y0 data register
+	i2cWaitForComplete();
+	
+	i2cSendStop();		 //repeat start
+	i2cSendStart();
+
+	i2cWaitForComplete();
+	i2cSendByte(0xA7);    //read from ADXL
+	i2cWaitForComplete();
+	i2cReceiveByte(TRUE);
+	i2cWaitForComplete();
+	yl = i2cGetReceivedByte();	//x low byte
+	i2cWaitForComplete();
+	i2cReceiveByte(FALSE);
+	i2cWaitForComplete();
+	dummy = i2cGetReceivedByte();	//must do a multiple byte read?
+	i2cWaitForComplete();
+	i2cSendStop();	
+	
+	//0x35 data registers
+	i2cSendStart();
+	i2cWaitForComplete();
+	i2cSendByte(0xA6);    //write to ADXL
+	i2cWaitForComplete();
+	i2cSendByte(0x35);    //Y1 data register
+	i2cWaitForComplete();
+	
+	i2cSendStop();		 //repeat start
+	i2cSendStart();
+
+	i2cWaitForComplete();
+	i2cSendByte(0xA7);    //read from ADXL
+	i2cWaitForComplete();
+	i2cReceiveByte(TRUE);
+	i2cWaitForComplete();
+	yh = i2cGetReceivedByte();	//y high byte
+	i2cWaitForComplete();
+	i2cReceiveByte(FALSE);
+	i2cWaitForComplete();
+	dummy = i2cGetReceivedByte();	//must do a multiple byte read?
+	i2cWaitForComplete();
+	i2cSendStop();
+	yo = yl|(yh << 8);
+	return yo;
+}
+
+uint16_t z_accel(void)
+{	
+	//0xA6 for a write
+	//0xA7 for a read
+	
+	uint8_t dummy, zh, zl;
+	uint16_t zo;
+	
+	//0x36 data registers
+	i2cSendStart();
+	i2cWaitForComplete();
+	i2cSendByte(0xA6);    //write to ADXL
+	i2cWaitForComplete();
+	i2cSendByte(0x36);    //Z0 data register
+	i2cWaitForComplete();
+	
+	i2cSendStop();		 //repeat start
+	i2cSendStart();
+
+	i2cWaitForComplete();
+	i2cSendByte(0xA7);    //read from ADXL
+	i2cWaitForComplete();
+	i2cReceiveByte(TRUE);
+	i2cWaitForComplete();
+	zl = i2cGetReceivedByte();	//z low byte
+	i2cWaitForComplete();
+	i2cReceiveByte(FALSE);
+	i2cWaitForComplete();
+	dummy = i2cGetReceivedByte();	//must do a multiple byte read?
+	i2cWaitForComplete();
+	i2cSendStop();	
+	
+	//0x37 data registers
+	i2cSendStart();
+	i2cWaitForComplete();
+	i2cSendByte(0xA6);    //write to ADXL
+	i2cWaitForComplete();
+	i2cSendByte(0x37);    //Z1 data register
+	i2cWaitForComplete();
+	
+	i2cSendStop();		 //repeat start
+	i2cSendStart();
+
+	i2cWaitForComplete();
+	i2cSendByte(0xA7);    //read from ADXL
+	i2cWaitForComplete();
+	i2cReceiveByte(TRUE);
+	i2cWaitForComplete();
+	zh = i2cGetReceivedByte();	//z high byte
+	i2cWaitForComplete();
+	i2cReceiveByte(FALSE);
+	i2cWaitForComplete();
+	dummy = i2cGetReceivedByte();	//must do a multiple byte read?
+	i2cWaitForComplete();
+	i2cSendStop();
+	zo = zl|(zh << 8);	
+	return zo;
+}
+
+/*
+	Gyroscope Stufffff  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	Gyroscope Stufffff  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	Gyroscope Stufffff  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	Gyroscope Stufffff  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	Gyroscope Stufffff  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	Gyroscope Stufffff  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	Gyroscope Stufffff  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	Gyroscope Stufffff  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+*/
+
+void gyro_init(void)
+{
+	i2cSendStart();
+	i2cWaitForComplete();
+	i2cSendByte(ITG3205_W);	// write 0xB4
+	i2cWaitForComplete();
+	i2cSendByte(0x3E);	// write register address
+	i2cWaitForComplete();
+	i2cSendByte(0x80);
+	i2cWaitForComplete();
+	i2cSendStop();
+	
+	delay_ms(10);
+	
+	i2cSendStart();
+	i2cWaitForComplete();
+	i2cSendByte(ITG3205_W);	// write 0xB4
+	i2cWaitForComplete();
+	i2cSendByte(0x16);	// write register address
+	i2cWaitForComplete();
+	i2cSendByte(0x18);  // DLPF_CFG = 0, FS_SEL = 3
+	i2cWaitForComplete();
+	i2cSendStop();	
+	
+	delay_ms(10);
+	
+	i2cSendStart();
+	i2cWaitForComplete();
+	i2cSendByte(ITG3205_W);	// write 0xB4
+	i2cWaitForComplete();
+	i2cSendByte(0x3E);	// write register address
+	i2cWaitForComplete();
+	i2cSendByte(0x00);
+	i2cWaitForComplete();
+	i2cSendStop();
+}
+
+void print_itg3205(void)
+{
+	
+	fprintf(&USBSerialStream,"Gyroscope X axis = %4d \n", x_gyro());
+	fprintf(&USBSerialStream,"Gyroscope Y axis = %4d \n", y_gyro());
+	fprintf(&USBSerialStream,"Gyroscope Z axis = %4d \n", z_gyro());
+	fprintf(&USBSerialStream,"\n\r");
+
+	delay_ms(20);
+}
+
+uint16_t x_gyro(void)
+{
+	uint16_t  xh, xl, data;
+	
+	cbi(TWCR, TWEN);	// Disable TWI
+	sbi(TWCR, TWEN);	// Enable TWI
+	
+	i2cSendStart();
+	i2cWaitForComplete();
+	i2cSendByte(ITG3205_W);	// write 
+	i2cWaitForComplete();
+	i2cSendByte(0x1D);	   // x high address
+	i2cWaitForComplete();
+	i2cSendStart();
+	
+	i2cSendByte(ITG3205_R);	// read
+	i2cWaitForComplete();
+	i2cReceiveByte(FALSE);
+	i2cWaitForComplete();
+	
+	xh = i2cGetReceivedByte();	// Get MSB result
+	i2cWaitForComplete();
+	i2cSendStop();
+	
+	cbi(TWCR, TWEN);	// Disable TWI
+	sbi(TWCR, TWEN);	// Enable TWI
+	
+	i2cSendStart();
+	i2cWaitForComplete();
+	i2cSendByte(ITG3205_W);	// write
+	i2cWaitForComplete();
+	i2cSendByte(0x1E);	    // x low address
+	i2cWaitForComplete();
+	i2cSendStart();
+	
+	i2cSendByte(ITG3205_R);	// read
+	i2cWaitForComplete();
+	i2cReceiveByte(FALSE);
+	i2cWaitForComplete();
+	
+	xl = i2cGetReceivedByte();	// Get LSB result
+	i2cWaitForComplete();
+	i2cSendStop();
+	
+	data = xl|(xh << 8);
+	
+	cbi(TWCR, TWEN);	// Disable TWI
+	sbi(TWCR, TWEN);	// Enable TWI
+	
+	return data;
+}
+
+uint16_t y_gyro(void)
+{
+	uint16_t  xh, xl, data;
+	
+	cbi(TWCR, TWEN);	// Disable TWI
+	sbi(TWCR, TWEN);	// Enable TWI
+	
+	i2cSendStart();
+	i2cWaitForComplete();
+	i2cSendByte(ITG3205_W);	// write
+	i2cWaitForComplete();
+	i2cSendByte(0x1F);	// y high address
+	i2cWaitForComplete();
+	i2cSendStart();
+	
+	i2cSendByte(ITG3205_R);	 // read
+	i2cWaitForComplete();
+	i2cReceiveByte(FALSE);
+	i2cWaitForComplete();
+	
+	xh = i2cGetReceivedByte();	// Get MSB result
+	i2cWaitForComplete();
+	i2cSendStop();
+	
+	cbi(TWCR, TWEN);	// Disable TWI
+	sbi(TWCR, TWEN);	// Enable TWI
+	
+	i2cSendStart();
+	i2cWaitForComplete();
+	i2cSendByte(ITG3205_W);	// write
+	i2cWaitForComplete();
+	i2cSendByte(0x20);	// y low address
+	i2cWaitForComplete();
+	i2cSendStart();
+	
+	i2cSendByte(ITG3205_R);	// read
+	i2cWaitForComplete();
+	i2cReceiveByte(FALSE);
+	i2cWaitForComplete();
+	
+	xl = i2cGetReceivedByte();	// Get LSB result
+	i2cWaitForComplete();
+	i2cSendStop();
+	
+	data = xl|(xh << 8);
+	
+	cbi(TWCR, TWEN);	// Disable TWI
+	sbi(TWCR, TWEN);	// Enable TWI
+	
+	return data;
+}
+
+uint16_t z_gyro(void)
+{
+	uint16_t  xh, xl, data;
+	
+	cbi(TWCR, TWEN);	// Disable TWI
+	sbi(TWCR, TWEN);	// Enable TWI
+	
+	i2cSendStart();
+	i2cWaitForComplete();
+	i2cSendByte(ITG3205_W);	// write
+	i2cWaitForComplete();
+	i2cSendByte(0x21);	// z high address
+	i2cWaitForComplete();
+	i2cSendStart();
+	
+	i2cSendByte(ITG3205_R);	// read
+	i2cWaitForComplete();
+	i2cReceiveByte(FALSE);
+	i2cWaitForComplete();
+	
+	xh = i2cGetReceivedByte();	// Get MSB result
+	i2cWaitForComplete();
+	i2cSendStop();
+	
+	cbi(TWCR, TWEN);	// Disable TWI
+	sbi(TWCR, TWEN);	// Enable TWI
+	
+	i2cSendStart();
+	i2cWaitForComplete();
+	i2cSendByte(ITG3205_W);	// write
+	i2cWaitForComplete();
+	i2cSendByte(0x22);	// z low address
+	i2cWaitForComplete();
+	i2cSendStart();
+	
+	i2cSendByte(ITG3205_R);	// read
+	i2cWaitForComplete();
+	i2cReceiveByte(FALSE);
+	i2cWaitForComplete();
+	
+	xl = i2cGetReceivedByte();	// Get LSB result
+	i2cWaitForComplete();
+	i2cSendStop();
+	
+	data = xl|(xh << 8);
+	
+	cbi(TWCR, TWEN);	// Disable TWI
+	sbi(TWCR, TWEN);	// Enable TWI
+	
+	return data;
+}
+
+/*
+	Magnetometer Stufffff  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	Magnetometer Stufffff  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	Magnetometer Stufffff  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	Magnetometer Stufffff  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	Magnetometer Stufffff  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	Magnetometer Stufffff  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	Magnetometer Stufffff  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	Magnetometer Stufffff  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	Magnetometer Stufffff  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+*/
+
+
+void magnetometer_init(void)
+{	 
+	i2cSendStart();
+	i2cWaitForComplete();
+	i2cSendByte(0x3C);    //write to HMC
+	i2cWaitForComplete();
+	i2cSendByte(0x00);    //Configuration Register A
+	i2cWaitForComplete();
+	i2cSendByte(0x70);    //8 average, 15Hz, normal measurement 0x70
+	i2cWaitForComplete();
+	i2cSendStop();
+	
+	i2cSendStart();
+	i2cWaitForComplete();
+	i2cSendByte(0x3C);    //write to HMC
+	i2cWaitForComplete();
+	i2cSendByte(0x01);    //Configuration Register B
+	i2cWaitForComplete();
+	i2cSendByte(0xA0);    //gain = 5
+	i2cWaitForComplete();
+	i2cSendStop();
+	 
+	i2cSendStart();
+	i2cWaitForComplete();
+	i2cSendByte(0x3C);    //write to HMC
+	i2cWaitForComplete();
+	i2cSendByte(0x02);    //mode register
+	i2cWaitForComplete();
+	i2cSendByte(0x00);    //continuous measurement mode
+	i2cWaitForComplete();
+	i2cSendStop();
+}
+
+void print_hmc5883(void)
+{
+	
+	magnetometer();
+	fprintf(&USBSerialStream,"Magnetometer X axis = %4d \n", x_mag);
+	fprintf(&USBSerialStream,"Magnetometer Y axis = %4d \n", y_mag);
+	fprintf(&USBSerialStream,"Magnetometer Z axis = %4d \n", z_mag);
+	fprintf(&USBSerialStream,"\n\r");
+
+	delay_ms(20);
+}
+
+void magnetometer(void)
+{
+	/*
+		The magnetometer values must be read consecutively
+		in order to move the magnetometer pointer. Therefore the x, y, and z
+		outputs need to be kept in this function. To read the magnetometer 
+		values, call the function magnetometer(), then global vars 
+		x_mag, y_mag, z_mag.
+	*/
+	
+	magnetometer_init();
+	
+	uint8_t xh, xl, yh, yl, zh, zl;
+	
+	//must read all six registers plus one to move the pointer back to 0x03
+	
+	i2cSendStart();
+	i2cWaitForComplete();
+	i2cSendByte(0x3D);    //write to HMC
+	i2cWaitForComplete();
+	i2cReceiveByte(TRUE);
+	i2cWaitForComplete();
+	xh = i2cGetReceivedByte();	//x high byte
+	i2cWaitForComplete();
+	
+	i2cReceiveByte(TRUE);
+	i2cWaitForComplete();
+	xl = i2cGetReceivedByte();	//x low byte
+	i2cWaitForComplete();
+	x_mag = xl|(xh << 8);
+	
+	i2cReceiveByte(TRUE);
+	i2cWaitForComplete();
+	zh = i2cGetReceivedByte();	
+	i2cWaitForComplete();      //z high byte
+	
+	i2cReceiveByte(TRUE);
+	i2cWaitForComplete();
+	zl = i2cGetReceivedByte();	//z low byte
+	i2cWaitForComplete();
+	z_mag = zl|(zh << 8);
+	
+	i2cReceiveByte(TRUE);
+	i2cWaitForComplete();
+	yh = i2cGetReceivedByte();	//y high byte
+	i2cWaitForComplete();
+	
+	i2cReceiveByte(TRUE);
+	i2cWaitForComplete();
+	yl = i2cGetReceivedByte();	//y low byte
+	i2cWaitForComplete();
+	y_mag = yl|(yh << 8);
+	
+	i2cSendByte(0x3D);         //must reach 0x09 to go back to 0x03
+	i2cWaitForComplete();
+	
+	i2cSendStop();	
+}
+
