@@ -35,6 +35,7 @@ using Application = System.Windows.Application;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 using Point = System.Windows.Point;
 using Settings = GTSettings.Settings;
+using GazeTrackerUI.Mappings;
 
 namespace GazeTrackerUI
 {
@@ -1014,7 +1015,8 @@ namespace GazeTrackerUI
 
     private void BtnStartStop_Action(object sender, RoutedEventArgs e)
     {
-
+        MappingsWindow.Instance.Visibility = Visibility.Visible;
+        MappingsWindow.Instance.Focus();
     }
   }
 }

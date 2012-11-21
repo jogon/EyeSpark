@@ -202,6 +202,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Mappings\MappingsWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MenubarIconsUserControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -315,6 +319,9 @@
     <Compile Include="Calibration\CommunitySharing\UploadFile.cs" />
     <Compile Include="Calibration\SharingControlUC.xaml.cs">
       <DependentUpon>SharingControlUC.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Mappings\MappingsWindow.xaml.cs">
+      <DependentUpon>MappingsWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Settings\CameraIconUC.xaml.cs">
       <DependentUpon>CameraIconUC.xaml</DependentUpon>
@@ -524,6 +531,7 @@
     <Resource Include="Graphics\wizard.png" />
     <Resource Include="Graphics\zoomLevel.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
