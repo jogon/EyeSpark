@@ -63,6 +63,13 @@ namespace GazeTrackerUI
     private MessageWindow msgWindow;
     // private Tracker tracker;
 
+    #region EyeSpark specific code
+
+    private NotifyIcon trayIcon;
+    private ContextMenu trayMenu;
+
+    #endregion
+    
     #endregion
 
 
@@ -80,8 +87,62 @@ namespace GazeTrackerUI
 
       InitializeComponent();
 
+      #region EyeSpark specific code
+
+      // create a simple tray menu with only one item.
+      trayMenu = new ContextMenu();
+      trayMenu.MenuItems.Add("Open", ShowFromTray);
+      trayMenu.MenuItems.Add("Exit " + Title, OnExit);
+
+      // Create a tray icon. In this example we usa a
+      // standard system icon for simplicity, but you
+      // can of course use your own custom icon too.
+      trayIcon = new NotifyIcon();
+
+      // TODO: [EyeSpark] Decide if aditional info is needed in system tray 
+      trayIcon.Text = Title;
+      trayIcon.Icon = Properties.Resources.eyespark;
+
+      // Add menu to tray icon and show it.
+      trayIcon.ContextMenu = trayMenu;
+      trayIcon.DoubleClick += new EventHandler(trayIcon_DoubleClick);
+      
+      #endregion
+
     }
 
+    #region EyeSpark specific code
+    private void OnExit(object sender, EventArgs e)
+    { 
+    
+    }
+
+    private void HideToTray()
+    {
+        Hide();
+        trayIcon.Visible = true;
+        WindowState = WindowState.Minimized;
+    }
+
+    private void ShowFromTray()
+    {
+        trayIcon.Visible = false;
+        Show();
+        this.Focus();
+        WindowState = WindowState.Normal;
+    }
+
+    private void ShowFromTray(object sender, EventArgs e)
+    {
+        ShowFromTray();
+    }
+    
+    private void trayIcon_DoubleClick(object sender, EventArgs e)
+    {
+        ShowFromTray();   
+    }
+
+    #endregion
     private void GazeTrackerUIMainWindow_ContentRendered(object sender, EventArgs e)
     {
       // Load GTSettings
@@ -891,8 +952,13 @@ namespace GazeTrackerUI
       // Minimize settings window
       SettingsWindow.Instance.WindowState = WindowState.Minimized;
 
-      // Mimimize the application window
-      WindowState = WindowState.Minimized;
+//      // Mimimize the application window
+//      WindowState = WindowState.Minimized;
+
+      #region EyeSpark specific code
+      HideToTray();
+      
+      #endregion
     }
 
     private void AppClose(object sender, MouseButtonEventArgs e)
