@@ -92,7 +92,7 @@ namespace GazeTrackerUI
       // create a simple tray menu with only one item.
       trayMenu = new ContextMenu();
       trayMenu.MenuItems.Add("Open", ShowFromTray);
-      trayMenu.MenuItems.Add("Exit " + Title, OnExit);
+      trayMenu.MenuItems.Add("Exit " + Title, AppClose);
 
       // Create a tray icon. In this example we usa a
       // standard system icon for simplicity, but you
@@ -105,18 +105,13 @@ namespace GazeTrackerUI
 
       // Add menu to tray icon and show it.
       trayIcon.ContextMenu = trayMenu;
-      trayIcon.DoubleClick += new EventHandler(trayIcon_DoubleClick);
+      trayIcon.DoubleClick += new EventHandler(ShowFromTray);
       
       #endregion
 
     }
 
     #region EyeSpark specific code
-    private void OnExit(object sender, EventArgs e)
-    { 
-    
-    }
-
     private void HideToTray()
     {
         Hide();
@@ -124,22 +119,12 @@ namespace GazeTrackerUI
         WindowState = WindowState.Minimized;
     }
 
-    private void ShowFromTray()
+    private void ShowFromTray(object sender, EventArgs e)
     {
         trayIcon.Visible = false;
         Show();
         this.Focus();
         WindowState = WindowState.Normal;
-    }
-
-    private void ShowFromTray(object sender, EventArgs e)
-    {
-        ShowFromTray();
-    }
-    
-    private void trayIcon_DoubleClick(object sender, EventArgs e)
-    {
-        ShowFromTray();   
     }
 
     #endregion
@@ -961,8 +946,12 @@ namespace GazeTrackerUI
       #endregion
     }
 
-    private void AppClose(object sender, MouseButtonEventArgs e)
+    private void AppClose(object sender, EventArgs e)
     {
+      #region EyeSpark specific code
+      trayIcon.Visible = false;  
+      #endregion
+      
       // Save settings 
       SettingsWindow.Instance.SaveSettings();
       //CameraSettingsWindow.Instance.Close(); //is already closed - will force the class to reinitialize only to be closed again

@@ -97,7 +97,7 @@
             	</Grid>
             </Grid>
             
-            <Label Content="x" MouseDown="AppClose" Background="{x:Null}" FontFamily="Verdana" FontSize="18.667" Foreground="#FF8E8E8E" HorizontalAlignment="Right" x:Name="X" Width="25" ToolTip="Close" Margin="0,-6.5,0,0" Panel.ZIndex="99" VerticalAlignment="Top" />
+            <Label Content="x" Background="{x:Null}" FontFamily="Verdana" FontSize="18.667" Foreground="#FF8E8E8E" HorizontalAlignment="Right" x:Name="X" Width="25" ToolTip="Close" Margin="0,-6.5,0,0" Panel.ZIndex="99" VerticalAlignment="Top" MouseDown="AppMinimize" />
             <Label Content="_" MouseDown="AppMinimize" Background="{x:Null}" FontFamily="Shruti" FontSize="21.333" Foreground="#FF8E8E8E" HorizontalAlignment="Right" x:Name="_" Width="19.773" Margin="0,-15.5,20,0" ToolTip="Minimize" Panel.ZIndex="99" VerticalAlignment="Top" />
             <!--
             <TrackerViewer:TrackBoxUC x:Name="trackBoxUC" Margin="17,0,0,6" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="80" Height="50" Opacity="0" Visibility="Collapsed"/>
