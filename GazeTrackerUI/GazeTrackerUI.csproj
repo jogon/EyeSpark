@@ -399,6 +399,7 @@
     <Content Include="GazeTrackerUI.exe.log4net">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Graphics\EyeSpark Icon 64x64.ico" />
     <Resource Include="Graphics\GTKeyboard.png" />
     <None Include="Properties\app.config" />
   </ItemGroup>
