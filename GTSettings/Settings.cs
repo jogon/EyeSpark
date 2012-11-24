@@ -106,7 +106,7 @@ namespace GTSettings
         /// <summary>
         /// Holds all the mappings for head movements.
         /// </summary>
-        private readonly HeadMovement headMovement;
+        private readonly HeadMovement headMovementSettings;
         #endregion
 
         /// <summary>
@@ -141,6 +141,10 @@ namespace GTSettings
             eyeMovementSettings = new EyeMovement();
             cloudSettings = new Cloud();
 
+            #region EyeSpark specific code
+            headMovementSettings = new HeadMovement();
+            #endregion
+            
             // Observe Config directory and update combobox when new files are written/changed/deleted..
             myWatcher = new FileSystemWatcher(GTPath.GetLocalApplicationDataPath() +
                            Path.DirectorySeparatorChar + "Settings",
@@ -283,8 +287,7 @@ namespace GTSettings
         /// </summary>
         public HeadMovement HeadMovement
         {
-            get { 
-                return headMovement; }
+            get { return headMovementSettings; }
         }
         #endregion
         
@@ -319,7 +322,7 @@ namespace GTSettings
 
             try
             {
-                xmlWriter = new XmlTextWriter(fileSettings.SettingsDirectory + fileSettings.SettingsName + ".xml",
+                xmlWriter = new XmlTextWriter(fileSettings.SettingsDirectory + Path.DirectorySeparatorChar + fileSettings.SettingsName + ".xml",
                                               Encoding.UTF8) { Formatting = Formatting.Indented };
                 xmlWriter.WriteStartDocument();
                 xmlWriter.WriteStartElement(Name);
@@ -335,6 +338,10 @@ namespace GTSettings
                 visualizationSettings.WriteConfigFile(xmlWriter);
                 autotuneSettings.WriteConfigFile(xmlWriter);
                 eyeMovementSettings.WriteConfigFile(xmlWriter);
+
+                #region EyeSpark specific code
+                headMovementSettings.WriteConfigFile(xmlWriter);
+                #endregion
 
                 xmlWriter.WriteEndElement(); // GazeTrackerConfiguration
                 xmlWriter.WriteEndDocument();
@@ -356,9 +363,9 @@ namespace GTSettings
         /// path of the settings file to read.</param>
         public void LoadConfigFile(string filename)
         {
-            if (File.Exists(fileSettings.SettingsDirectory + filename))
+            if (File.Exists(fileSettings.SettingsDirectory + Path.DirectorySeparatorChar  + filename))
             {
-                XmlReader xmlReader = new XmlTextReader(fileSettings.SettingsDirectory + filename);
+                XmlReader xmlReader = new XmlTextReader(fileSettings.SettingsDirectory + Path.DirectorySeparatorChar + filename);
                 if (xmlReader != null)
                 {
                     try
@@ -396,11 +403,17 @@ namespace GTSettings
                         xmlReader.ReadToFollowing(EyeMovement.Name);
                         eyeMovementSettings.LoadConfigFile(xmlReader.ReadSubtree());
 
+                        #region EyeSpark specific code
+                        xmlReader.ReadToFollowing(HeadMovement.Name);
+                        headMovementSettings.LoadConfigFile(xmlReader.ReadSubtree());
+                        #endregion
+
                         xmlReader.Close();
                     }
                     catch (Exception ex)
                     {
                         xmlReader.Close();
+                        Console.WriteLine("Error loading settings: " + ex.Message);
                         // MessageBox.Show("Error loading settings: " + ex.Message);
                         // ErrorLogger.ProcessException(ex, false);
                     }

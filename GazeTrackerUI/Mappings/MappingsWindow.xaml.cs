@@ -73,29 +73,12 @@ namespace GazeTrackerUI.Mappings
 
         private void appComboBox_DropDownClosed(object sender, EventArgs e)
         {
-            //string processName = (string)appComboBox.SelectedItem;
-            //if (processName == null)
-            //{
-            //    processName = dummyProfile.Id; // get the previous profile id
-            //    appComboBox.SelectedItem = processName;
-            //}
-            ////            if (!processName.Equals(DefaultApplicationName)) {
-            //AppProfile profile;
-            //if (profiles.TryGetValue(processName, out profile))
-            //{
-            //    dummyProfile = profile;
-            //}
-            //else
-            //{
-            //    dummyProfile = new AppProfile(processName);
-            //}
-            //            }
-
-            resetGestureFields();
+            resetFields();
         }
 
-        private void resetGestureFields()
+        private void resetFields()
         {
+            appComboBox.SelectedItem = selectedItem;
             upTextBox.Text = selectedMap[Gesture.Pitch.Up];
             downTextBox.Text = selectedMap[Gesture.Pitch.Down]; ;
             leftTextBox.Text = selectedMap[Gesture.Roll.Left]; ;
@@ -136,7 +119,7 @@ namespace GazeTrackerUI.Mappings
 
         private void cancelButton_Click(object sender, RoutedEventArgs e)
         {
-            resetGestureFields();
+            resetFields();
         }
 
         private void saveButton_Click(object sender, RoutedEventArgs e)
@@ -167,7 +150,7 @@ namespace GazeTrackerUI.Mappings
                 selectedMap = dummyMap;
                 if (selectedItem != DefaultApplicationName)
                 {
-                    Dictionary<String, String> map = 
+                    Dictionary<String, String> map =
                         Settings.Instance.HeadMovement.GetMapping(selectedItem);
                     if (map != null)
                     {
