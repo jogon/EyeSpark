@@ -13,6 +13,7 @@ using System.Windows.Shapes;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 using EyeSparkTrackingLibrary;
+using GTSettings;
 
 namespace GazeTrackerUI.Mappings
 {
@@ -149,17 +150,7 @@ namespace GazeTrackerUI.Mappings
                 //dummyMap[Gesture.Yaw.Left] = upTextBox.Text;
                 //dummyMap[Gesture.Yaw.Right] = upTextBox.Text;
                 
-                // TODO: [EyeSpark] I don't need to do this if I use a bool in
-                // selection changed.
-                //Dictionary<String, String> map;
-                //if (GTSettings.Settings.Instance.HeadMovement.Map.TryGetValue(selectedItem, map))
-                //{
-                //    GTSettings.Settings.Instance.HeadMovement.Map[selectedItem] = dummyMap;
-                //}
-                //else
-                //{
-                //    GTSettings.Settings.Instance.HeadMovement.Map.add(selectedItem, dummyMap);
-                //}
+                Settings.Instance.HeadMovement.SaveMapping(selectedItem, selectedMap);
                 CreateDummyMap();
                 
                 MessageBox.Show("Saved");
@@ -174,14 +165,15 @@ namespace GazeTrackerUI.Mappings
             {
                 selectedItem = item;
                 selectedMap = dummyMap;
-   //             if (selectedItem != DefaultApplicationName)
-  //              {                    
- //                   Dictionary<String, String> map;                
-//                    if (GTSettings.Settings.Instance.HeadMovement.Map.TryGetValue(selectedItem, map))
-//                    {
-//                        selectedMap = map;
-//            }
-//               }                
+                if (selectedItem != DefaultApplicationName)
+                {
+                    Dictionary<String, String> map = 
+                        Settings.Instance.HeadMovement.GetMapping(selectedItem);
+                    if (map != null)
+                    {
+                        selectedMap = map;
+                    }
+                }                
             }            
         }
 

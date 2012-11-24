@@ -102,6 +102,13 @@ namespace GTSettings
         /// </summary>
         private readonly Processing processingSettings;
 
+        #region EyeSpark specific code
+        /// <summary>
+        /// Holds all the mappings for head movements.
+        /// </summary>
+        private readonly HeadMovement headMovement;
+        #endregion
+
         /// <summary>
         /// Holds all the settings used in the visualization routines
         /// </summary>
@@ -270,6 +277,17 @@ namespace GTSettings
             get { return fileSettings; }
         }
 
+        #region EyeSpark specific code
+        /// <summary>
+        /// Gets the head movement mappings.
+        /// </summary>
+        public HeadMovement HeadMovement
+        {
+            get { 
+                return headMovement; }
+        }
+        #endregion
+        
         #endregion //PROPERTIES
 
         #region Public methods

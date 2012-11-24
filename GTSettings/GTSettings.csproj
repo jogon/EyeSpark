@@ -106,6 +106,7 @@
     <Compile Include="Eyestracker.cs" />
     <Compile Include="Eyetracker.cs" />
     <Compile Include="FileSettings.cs" />
+    <Compile Include="HeadMovement.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Network.cs" />
     <Compile Include="Processing.cs" />
