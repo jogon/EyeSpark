@@ -30,6 +30,7 @@
     <SignAssembly>false</SignAssembly>
     <AssemblyOriginatorKeyFile>
     </AssemblyOriginatorKeyFile>
+    <TargetFrameworkProfile />
     <PublishUrl>ftp://ftp.gazegroup.org/software/gazetracker/</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Web</InstallFrom>
@@ -136,6 +137,7 @@
     </Reference>
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xaml" />
     <Reference Include="System.Xml" />
     <Reference Include="WindowsBase">
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
@@ -408,6 +410,7 @@
     </Content>
     <Resource Include="Graphics\eyespark.ico" />
     <Resource Include="Graphics\GTKeyboard.png" />
+    <None Include="app.config" />
     <None Include="Properties\app.config" />
   </ItemGroup>
   <ItemGroup>
@@ -443,6 +446,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\EyeSparkTrackingLibrary\EyeSparkTrackingLibrary.csproj">
+      <Project>{ECA999AF-26ED-4951-A1BF-1FC90A6C5842}</Project>
+      <Name>EyeSparkTrackingLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\GazeTrackerClient\GazeTrackerClient.csproj">
       <Project>{BD8916FF-DE52-4932-A71B-5E748AF559F0}</Project>
       <Name>GazeTrackerClient</Name>

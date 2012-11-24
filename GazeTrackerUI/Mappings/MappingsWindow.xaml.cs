@@ -12,6 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
+using EyeSparkTrackingLibrary;
 
 namespace GazeTrackerUI.Mappings
 {
@@ -67,7 +68,6 @@ namespace GazeTrackerUI.Mappings
         {
             appComboBox.Items.Add(DefaultApplicationName);
             appComboBox.SelectedItem = DefaultApplicationName;
-            //appComboBox.SelectedIndex = 0;
         }
 
         private void appComboBox_DropDownClosed(object sender, EventArgs e)
@@ -95,10 +95,10 @@ namespace GazeTrackerUI.Mappings
 
         private void resetGestureFields()
         {
-            //upTextBox.Text = selectedMap[Gestures.Up];
-            //downTextBox.Text = selectedMap[Gestures.Down]; ;
-            //leftTextBox.Text = selectedMap[Gestures.Left]; ;
-            //rightTextBox.Text = selectedMap[Gestures.Right]; ;
+            upTextBox.Text = selectedMap[Gesture.Pitch.Up];
+            downTextBox.Text = selectedMap[Gesture.Pitch.Down]; ;
+            leftTextBox.Text = selectedMap[Gesture.Roll.Left]; ;
+            rightTextBox.Text = selectedMap[Gesture.Roll.Right]; ;
         }
 
         private void appComboBox_DropDownOpened(object sender, EventArgs e)
@@ -142,12 +142,26 @@ namespace GazeTrackerUI.Mappings
         {
             if (selectedItem != DefaultApplicationName)
             {
-                //dummyProfile.UpdateGestureMapping(Gestures.Up, upTextBox.Text);
-                //dummyProfile.UpdateGestureMapping(Gestures.Down, downTextBox.Text);
-                //dummyProfile.UpdateGestureMapping(Gestures.Left, leftTextBox.Text);
-                //dummyProfile.UpdateGestureMapping(Gestures.Right, rightTextBox.Text);
-
+                selectedMap[Gesture.Pitch.Up] = upTextBox.Text;
+                selectedMap[Gesture.Pitch.Down] = downTextBox.Text;
+                selectedMap[Gesture.Roll.Left] = leftTextBox.Text;
+                selectedMap[Gesture.Roll.Right] = rightTextBox.Text;
+                //dummyMap[Gesture.Yaw.Left] = upTextBox.Text;
+                //dummyMap[Gesture.Yaw.Right] = upTextBox.Text;
+                
+                // TODO: [EyeSpark] I don't need to do this if I use a bool in
+                // selection changed.
+                //Dictionary<String, String> map;
+                //if (GTSettings.Settings.Instance.HeadMovement.Map.TryGetValue(selectedItem, map))
+                //{
+                //    GTSettings.Settings.Instance.HeadMovement.Map[selectedItem] = dummyMap;
+                //}
+                //else
+                //{
+                //    GTSettings.Settings.Instance.HeadMovement.Map.add(selectedItem, dummyMap);
+                //}
                 CreateDummyMap();
+                
                 MessageBox.Show("Saved");
             }    
         }
@@ -156,26 +170,30 @@ namespace GazeTrackerUI.Mappings
         {
             String item = (String)appComboBox.SelectedItem;
             
-            if (!selectedItem.Equals(item))
+            if (item != null && !selectedItem.Equals(item))
             {
- //               selectedItem = item;
-                //selectedMap = dummyMap;
-                if (selectedItem != DefaultApplicationName)
-                {
-                    /*
-                    Dictionary<String, String> map;                
-                    if (GTSettings.Settings.Instance.Mappings.Map.TryGetValue(selectedItem, map))
-                    {
-                        selectedMap = map;
-                    }
-                */
-                }                
+                selectedItem = item;
+                selectedMap = dummyMap;
+   //             if (selectedItem != DefaultApplicationName)
+  //              {                    
+ //                   Dictionary<String, String> map;                
+//                    if (GTSettings.Settings.Instance.HeadMovement.Map.TryGetValue(selectedItem, map))
+//                    {
+//                        selectedMap = map;
+//            }
+//               }                
             }            
         }
 
         private void CreateDummyMap()
-        { 
-        
+        {
+            dummyMap = new Dictionary<string, string>();
+            dummyMap.Add(Gesture.Pitch.Up, "");
+            dummyMap.Add(Gesture.Pitch.Down, "");
+            dummyMap.Add(Gesture.Yaw.Left, "");
+            dummyMap.Add(Gesture.Yaw.Right, "");
+            dummyMap.Add(Gesture.Roll.Left, "");
+            dummyMap.Add(Gesture.Roll.Right, "");
         }
 
 

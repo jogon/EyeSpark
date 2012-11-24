@@ -11,14 +11,14 @@
     <deploymentProvider codebase="http://www.gazegroup.org/software/gazetracker/GazeTrackerUI.application" />
   </deployment>
   <dependency>
-    <dependentAssembly dependencyType="install" codebase="GazeTrackerUI.exe.manifest" size="19713">
+    <dependentAssembly dependencyType="install" codebase="GazeTrackerUI.exe.manifest" size="20357">
       <assemblyIdentity name="GazeTrackerUI.exe" version="1.0.0.5" publicKeyToken="0000000000000000" language="neutral" processorArchitecture="x86" type="win32" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>8g3aaxrCy90le+HmQARadELFO4Q=</dsig:DigestValue>
+        <dsig:DigestValue>9axrO9yUc8HGyMXevVd6mXLujyA=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

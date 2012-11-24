@@ -191,6 +191,18 @@
     </dependentAssembly>
   </dependency>
   <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="EyeSparkTrackingLibrary.dll" size="5120">
+      <assemblyIdentity name="EyeSparkTrackingLibrary" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+        <dsig:DigestValue>oESiwFrR0M6HBsJZ/K9MJWd2nyc=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <dependency>
     <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="GazeGUI.dll" size="372736">
       <assemblyIdentity name="GazeGUI" version="0.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
@@ -227,14 +239,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="GazeTrackerUI.exe" size="784384">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="GazeTrackerUI.exe" size="784896">
       <assemblyIdentity name="GazeTrackerUI" version="2.1.0.0" language="neutral" processorArchitecture="x86" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>80DJic4sZqVOVhDPTSwbu2aBORc=</dsig:DigestValue>
+        <dsig:DigestValue>IWrzql1mdNw0E0JUfPBRGAoKrTI=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -334,13 +346,13 @@
       </hash>
     </dependentAssembly>
   </dependency>
-  <file name="GazeTrackerUI.exe.config" size="1268">
+  <file name="GazeTrackerUI.exe.config" size="845">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>ngoQRjW8odIUbX+Lc04DFcGXAHk=</dsig:DigestValue>
+      <dsig:DigestValue>XYlYyRNRV9BPUKF9REwTxfyXWeM=</dsig:DigestValue>
     </hash>
   </file>
   <file name="GazeTrackerUI.exe.log4net" size="2688">
