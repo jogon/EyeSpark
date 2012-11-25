@@ -1067,6 +1067,9 @@ namespace GazeTrackerUI
         {
             MappingsWindow.Instance.Visibility = Visibility.Visible;
             MappingsWindow.Instance.Focus();
+
+            MappingsWindow.Instance.Top = Top;
+            MappingsWindow.Instance.Left = Left - MappingsWindow.Instance.Width - 5;
         }
     }
 }

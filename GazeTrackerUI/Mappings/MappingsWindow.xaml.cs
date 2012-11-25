@@ -101,9 +101,8 @@ namespace GazeTrackerUI.Mappings
         }
         #endregion
 
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void AppMinimize(object sender, MouseButtonEventArgs e)
         {
-            e.Cancel = true;
             Visibility = Visibility.Collapsed;
         }
 
@@ -308,6 +307,7 @@ namespace GazeTrackerUI.Mappings
             keySequence.Clear();
             sequenceTextBox.Text = "";
         }
+
 
 
     }
