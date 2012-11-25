@@ -48,7 +48,7 @@
         <TextBox Height="23"  FontSize="12" Background="#80202020" Foreground="#FFC9C9C9" BorderBrush="WhiteSmoke" HorizontalAlignment="Left" Margin="81,98,0,0" Name="sequenceTextBox" VerticalAlignment="Top" Width="200" IsReadOnly="True" />
         <Image Height="38" Margin="0,91,28,0" Name="keyboardButton" Stretch="Fill" VerticalAlignment="Top" Source="/GazeTrackerUI;component/Graphics/keyboard.png" HorizontalAlignment="Right" Width="41" ToolTip="Open Virtual Keyboad" MouseEnter="keyboardButton_MouseEnter" MouseLeave="keyboardButton_MouseLeave" MouseDown="keyboardButton_MouseDown" />
         <Label Content="Clear Sequence"  FontSize="12" Height="28" HorizontalAlignment="Left" Margin="81,120,0,0" Name="clearLabel" VerticalAlignment="Top" Foreground="#FF2EA8DE" MouseEnter="clearLabel_MouseEnter" MouseLeave="clearLabel_MouseLeave" MouseDown="clearLabel_MouseDown" />
-        <GazeGUIVelocity:Button ActivationMethod="Mouse" Background="#E5242424" Foreground="{x:Null}" Height="38" Label="Cancel" Margin="263,133,0,0" MinHeight="38" MinWidth="75" Name="cancelButton" Width="75" />
-        <GazeGUIVelocity:Button ActivationMethod="Mouse" Background="#E5242424" Foreground="{x:Null}" Height="38" Label="Save" Margin="173,133,90,0" MinHeight="38" MinWidth="75" Name="saveButton" Width="75" />
+        <GazeGUIVelocity:Button ActivationMethod="Mouse" Background="#E5242424" Foreground="{x:Null}" Height="38" Label="Cancel" Margin="263,133,0,0" MinHeight="38" MinWidth="75" Name="cancelButton" Width="75" Action="cancelButton_Click" />
+        <GazeGUIVelocity:Button ActivationMethod="Mouse" Background="#E5242424" Foreground="{x:Null}" Height="38" Label="Save" Margin="173,133,90,0" MinHeight="38" MinWidth="75" Name="saveButton" Width="75" Action="saveButton_Click" />
     </Grid>
 </Window>
