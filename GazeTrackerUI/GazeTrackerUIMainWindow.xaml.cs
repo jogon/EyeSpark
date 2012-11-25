@@ -986,14 +986,22 @@ namespace GazeTrackerUI
             this.videoImageControl.Stop(true);
 
             // Minimize settings window
-            SettingsWindow.Instance.WindowState = WindowState.Minimized;
-
+            if (SettingsWindow.Instance.Visibility == Visibility.Visible)
+            {
+                SettingsWindow.Instance.WindowState = WindowState.Minimized;
+                SettingsWindow.Instance.ShowInTaskbar = false;
+            }
+            
             //      // Mimimize the application window
             //      WindowState = WindowState.Minimized;
 
             #region EyeSpark specific code
+            if (MappingsWindow.Instance.Visibility == Visibility.Visible)
+            {
+                MappingsWindow.Instance.WindowState = WindowState.Minimized;
+                MappingsWindow.Instance.ShowInTaskbar = false;
+            }
             HideToTray();
-
             #endregion
         }
 
@@ -1030,8 +1038,18 @@ namespace GazeTrackerUI
             if (Visibility == Visibility.Visible && Settings.Instance.Visualization.IsDrawing == false)
                 this.videoImageControl.Start();
 
-            SettingsWindow.Instance.WindowState = WindowState.Normal;
+            if (SettingsWindow.Instance.Visibility == Visibility.Visible)
+            {
+                SettingsWindow.Instance.WindowState = WindowState.Normal;
+                SettingsWindow.Instance.ShowInTaskbar = true;
+            }
+            if (MappingsWindow.Instance.Visibility == Visibility.Visible)
+            {
+                MappingsWindow.Instance.WindowState = WindowState.Normal;
+                MappingsWindow.Instance.ShowInTaskbar = true;
+            }
             SettingsWindow.Instance.Focus();
+            MappingsWindow.Instance.Focus();
             this.Focus();
 
 
