@@ -19,6 +19,8 @@ namespace GazeTrackingLibrary.Detection.Glint
         private EyeEnum eye;
         private GlintData glintData;
 
+        public int numberOfGlints;
+
         #endregion
 
         #region Constructor
