@@ -132,7 +132,7 @@ namespace GazeTrackerUI.Mappings
         {
             appComboBox.SelectedItem = selectedItem;
             GetKeySequence();
-            cancelButton.Focus();
+            sequenceTextBox.Focus();
         }
 
         private void appComboBox_DropDownOpened(object sender, EventArgs e)
@@ -216,7 +216,7 @@ namespace GazeTrackerUI.Mappings
                     gesturesComboBox.SelectedItem = defaultGesture;
                 }
 
-                cancelButton.Focus();
+                sequenceTextBox.Focus();
                 //sequenceTextBox.SelectAll();
             }
         }
@@ -290,7 +290,23 @@ namespace GazeTrackerUI.Mappings
         {
             DataItem gesture = (DataItem)gesturesComboBox.SelectedItem;
             GetKeySequence();
-            cancelButton.Focus();
+            sequenceTextBox.Focus();
+        }
+
+        private void clearLabel_MouseEnter(object sender, MouseEventArgs e)
+        {
+            Cursor = Cursors.Hand;
+        }
+
+        private void clearLabel_MouseLeave(object sender, MouseEventArgs e)
+        {
+            Cursor = Cursors.Arrow;
+        }
+
+        private void clearLabel_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            keySequence.Clear();
+            sequenceTextBox.Text = "";
         }
 
 

@@ -7,8 +7,8 @@
         <ComboBox Height="23" HorizontalAlignment="Left" Margin="81,12,0,0" Name="appComboBox" VerticalAlignment="Top" Width="260" DropDownClosed="appComboBox_DropDownClosed" DropDownOpened="appComboBox_DropDownOpened" SelectionChanged="appComboBox_SelectionChanged">
             <ComboBoxItem />
         </ComboBox>
-        <Button Content="Cancel" Height="23" HorizontalAlignment="Right" Margin="0,138,12,0" Name="cancelButton" VerticalAlignment="Top" Width="75" Click="cancelButton_Click" />
-        <Button Content="Save" Height="23" HorizontalAlignment="Left" Margin="176,138,0,0" Name="saveButton" VerticalAlignment="Top" Width="75" Click="saveButton_Click" />
+        <Button Content="Cancel" Height="23" HorizontalAlignment="Right" Margin="0,140,12,0" Name="cancelButton" VerticalAlignment="Top" Width="75" Click="cancelButton_Click" />
+        <Button Content="Save" Height="23" HorizontalAlignment="Left" Margin="176,140,0,0" Name="saveButton" VerticalAlignment="Top" Width="75" Click="saveButton_Click" />
         <Label Content="Gesture" Height="28" HorizontalAlignment="Left" Margin="27,46,0,0" Name="label6" VerticalAlignment="Top" />
         <ComboBox Height="23" HorizontalAlignment="Left" Margin="81,46,0,0" Name="gesturesComboBox" VerticalAlignment="Top" Width="170" SelectionChanged="gesturesComboBox_SelectionChanged">
             <ComboBoxItem />
@@ -16,5 +16,6 @@
         <Label Content="Sequence" Height="28" HorizontalAlignment="Left" Margin="18,79,0,0" Name="label7" VerticalAlignment="Top" />
         <TextBox Height="23" HorizontalAlignment="Left" Margin="81,79,0,0" Name="sequenceTextBox" VerticalAlignment="Top" Width="200" IsReadOnly="True" />
         <Image Height="38" Margin="0,71,25,0" Name="keyboardButton" Stretch="Fill" VerticalAlignment="Top" Source="/GazeTrackerUI;component/Graphics/keyboard.png" HorizontalAlignment="Right" Width="41" ToolTip="Open Virtual Keyboad" MouseEnter="keyboardButton_MouseEnter" MouseLeave="keyboardButton_MouseLeave" MouseDown="keyboardButton_MouseDown" />
+        <Label Content="Clear Sequence" Height="28" HorizontalAlignment="Left" Margin="81,100,0,0" Name="clearLabel" VerticalAlignment="Top" Foreground="#FF2EA8DE" MouseEnter="clearLabel_MouseEnter" MouseLeave="clearLabel_MouseLeave" MouseDown="clearLabel_MouseDown" />
     </Grid>
 </Window>
