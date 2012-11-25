@@ -22,6 +22,7 @@ namespace GazeTrackerUI.Mappings
     /// </summary>
     public partial class MappingsWindow : Window
     {
+        #region Imports
         [DllImport("user32.dll")]
         private static extern IntPtr GetForegroundWindow();
 
@@ -32,20 +33,60 @@ namespace GazeTrackerUI.Mappings
         private static extern int GetWindowText(IntPtr hWnd,
             StringBuilder buffer, int length);
 
+        [DllImport("user32.dll")]
+        public static extern bool SetForegroundWindow(IntPtr hWnd);
+
+        #endregion
+
+        #region Fields
         private static string DefaultApplicationName = "-None Selected-";
 
         private static MappingsWindow instance;
 
-        private String selectedItem = "";
+        private String selectedItem = DefaultApplicationName;
+        private DataItem defaultGesture;
         private Dictionary<String, String> selectedMap;
         private Dictionary<String, String> dummyMap;
+        private KeySequence keySequence = new KeySequence();
 
+        class DataItem
+        {
+            private object name;
+            private object value;
+
+            public DataItem(object n, object v)
+            {
+                name = n;
+                value = v;
+            }
+
+            public Object Name
+            {
+                get { return name; }
+            }
+
+            public Object Value
+            {
+                get { return value; }
+            }
+
+            public override string ToString()
+            {
+                return name.ToString();
+            }
+        }
+
+        #endregion
+
+        #region Constructor
         private MappingsWindow()
         {
             CreateDummyMap();
             InitializeComponent();
         }
+        #endregion
 
+        #region Properties
         public static MappingsWindow Instance
         {
             get
@@ -58,6 +99,7 @@ namespace GazeTrackerUI.Mappings
 
             }
         }
+        #endregion
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
@@ -69,6 +111,16 @@ namespace GazeTrackerUI.Mappings
         {
             appComboBox.Items.Add(DefaultApplicationName);
             appComboBox.SelectedItem = DefaultApplicationName;
+
+            defaultGesture = new DataItem("Pitch Up", Gesture.Pitch.Up);
+            gesturesComboBox.Items.Add(defaultGesture);
+            gesturesComboBox.Items.Add(new DataItem("Pitch Down", Gesture.Pitch.Down));
+            gesturesComboBox.Items.Add(new DataItem("Roll Left", Gesture.Roll.Left));
+            gesturesComboBox.Items.Add(new DataItem("Roll Right", Gesture.Roll.Right));
+            gesturesComboBox.Items.Add(new DataItem("Yaw Left", Gesture.Yaw.Left));
+            gesturesComboBox.Items.Add(new DataItem("Yaw Right", Gesture.Yaw.Right));
+
+            gesturesComboBox.SelectedItem = defaultGesture;
         }
 
         private void appComboBox_DropDownClosed(object sender, EventArgs e)
@@ -79,10 +131,6 @@ namespace GazeTrackerUI.Mappings
         private void resetFields()
         {
             appComboBox.SelectedItem = selectedItem;
-            upTextBox.Text = selectedMap[Gesture.Pitch.Up];
-            downTextBox.Text = selectedMap[Gesture.Pitch.Down]; ;
-            leftTextBox.Text = selectedMap[Gesture.Roll.Left]; ;
-            rightTextBox.Text = selectedMap[Gesture.Roll.Right]; ;
         }
 
         private void appComboBox_DropDownOpened(object sender, EventArgs e)
@@ -126,24 +174,18 @@ namespace GazeTrackerUI.Mappings
         {
             if (selectedItem != DefaultApplicationName)
             {
-                selectedMap[Gesture.Pitch.Up] = upTextBox.Text;
-                selectedMap[Gesture.Pitch.Down] = downTextBox.Text;
-                selectedMap[Gesture.Roll.Left] = leftTextBox.Text;
-                selectedMap[Gesture.Roll.Right] = rightTextBox.Text;
-                //dummyMap[Gesture.Yaw.Left] = upTextBox.Text;
-                //dummyMap[Gesture.Yaw.Right] = upTextBox.Text;
-                
+
                 Settings.Instance.HeadMovement.SaveMapping(selectedItem, selectedMap);
                 CreateDummyMap();
-                
+
                 MessageBox.Show("Saved");
-            }    
+            }
         }
 
         private void appComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             String item = (String)appComboBox.SelectedItem;
-            
+
             if (item != null && !selectedItem.Equals(item))
             {
                 selectedItem = item;
@@ -156,8 +198,10 @@ namespace GazeTrackerUI.Mappings
                     {
                         selectedMap = map;
                     }
-                }                
-            }            
+                }
+
+                gesturesComboBox.SelectedItem = defaultGesture;
+            }
         }
 
         private void CreateDummyMap()
@@ -171,9 +215,57 @@ namespace GazeTrackerUI.Mappings
             dummyMap.Add(Gesture.Roll.Right, "");
         }
 
+        private void keyboardButton_MouseEnter(object sender, MouseEventArgs e)
+        {
+            Cursor = Cursors.Hand;
+        }
 
+        private void keyboardButton_MouseLeave(object sender, MouseEventArgs e)
+        {
+            Cursor = Cursors.Arrow;
+        }
 
+        private void keyboardButton_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            // get processes
+            Process[] pl = Process.GetProcesses();
+            foreach (Process p in pl)
+            {
+                // find the process for the on screen keyboard
+                if (p.ProcessName == "osk.exe")
+                {
+                    // if alive
+                    if (p.MainWindowHandle != IntPtr.Zero)
+                    {
+                        // bring to front
+                        SetForegroundWindow(p.MainWindowHandle);
+                        return;
+                    }
+                }
+            }
 
+            // not found; start the process
+            Process osk = new Process();
+            osk.StartInfo.FileName = "osk.exe";
+            osk.Start();
+        }
+
+        private void Window_KeyDown(object sender, KeyEventArgs e)
+        {
+            keySequence.Append(e.Key.ToString());
+            sequenceTextBox.Text = keySequence.ToString();
+        }
+
+        private void gesturesComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            //DataItem item = (DataItem)gesturesComboBox.SelectedItem;
+
+            //if (item != null)
+            //{
+            //    selectedGesture = (DataItem)item.Value;
+            //    keySequence = new KeySequence(selectedMap[(string)selectedGesture.Value]);
+            //}    
+        }
 
 
     }

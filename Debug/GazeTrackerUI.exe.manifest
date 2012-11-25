@@ -191,14 +191,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="EyeSparkTrackingLibrary.dll" size="6144">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="EyeSparkTrackingLibrary.dll" size="5632">
       <assemblyIdentity name="EyeSparkTrackingLibrary" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>k9KX7TBNckyVfkcb6kVjJWc4+pQ=</dsig:DigestValue>
+        <dsig:DigestValue>KYp4Tws39KCw6loBKl3fChpw52A=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -239,14 +239,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="GazeTrackerUI.exe" size="785408">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="GazeTrackerUI.exe" size="793088">
       <assemblyIdentity name="GazeTrackerUI" version="2.1.0.0" language="neutral" processorArchitecture="x86" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>eAOXjlsIhJmDZdey3ZaTVVnqWBo=</dsig:DigestValue>
+        <dsig:DigestValue>SQUS8aXOeXug0wSH9wld6af6F1M=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

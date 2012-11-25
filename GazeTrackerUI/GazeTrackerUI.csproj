@@ -322,6 +322,7 @@
     <Compile Include="Calibration\SharingControlUC.xaml.cs">
       <DependentUpon>SharingControlUC.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Mappings\KeySequence.cs" />
     <Compile Include="Mappings\MappingsWindow.xaml.cs">
       <DependentUpon>MappingsWindow.xaml</DependentUpon>
     </Compile>
@@ -408,6 +409,7 @@
     <Content Include="GazeTrackerUI.exe.log4net">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Graphics\keyboard.png" />
     <Resource Include="Graphics\eyespark.ico" />
     <Resource Include="Graphics\GTKeyboard.png" />
     <None Include="app.config" />

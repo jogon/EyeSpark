@@ -173,6 +173,7 @@ namespace GazeTrackerUI
         }
 
         #endregion
+
         private void GazeTrackerUIMainWindow_ContentRendered(object sender, EventArgs e)
         {
             // Load GTSettings
