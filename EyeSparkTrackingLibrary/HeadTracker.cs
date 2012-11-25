@@ -9,18 +9,6 @@ namespace EyeSparkTrackingLibrary
 {
     public class HeadTracker
     {
-        #region Imports
-        [DllImport("user32.dll")]
-        private static extern IntPtr GetForegroundWindow();
-
-        [DllImport("user32.dll")]
-        private static extern int GetWindowTextLength(IntPtr hWnd);
-
-        [DllImport("user32.dll")]
-        private static extern int GetWindowText(IntPtr hWnd,
-            StringBuilder buffer, int length);
-        #endregion
-
         #region Fields
         private static HeadTracker instance;
         #endregion
@@ -89,11 +77,11 @@ namespace EyeSparkTrackingLibrary
 
         private void StartThread()
         {
-            while (true)
-            {
-                System.Threading.Thread.Sleep(5000);
-                OnHeadMovement(null);
-            }
+            //while (true)
+            //{
+            //    System.Threading.Thread.Sleep(100);
+            //    OnHeadMovement(new HeadMovementEventArgs(Gesture.Pitch.Up));
+            //}
         }
 
         private void OnHeadMovement(HeadMovementEventArgs e) {

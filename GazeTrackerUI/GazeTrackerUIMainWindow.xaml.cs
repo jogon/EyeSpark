@@ -37,6 +37,9 @@ using Point = System.Windows.Point;
 using Settings = GTSettings.Settings;
 using GazeTrackerUI.Mappings;
 using EyeSparkTrackingLibrary;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Collections.Generic;
 
 namespace GazeTrackerUI
 {
@@ -54,6 +57,17 @@ namespace GazeTrackerUI
 
     public partial class GazeTrackerUIMainWindow
     {
+        #region Imports
+        [DllImport("user32.dll")]
+        private static extern IntPtr GetForegroundWindow();
+
+        [DllImport("user32.dll")]
+        private static extern int GetWindowTextLength(IntPtr hWnd);
+
+        [DllImport("user32.dll")]
+        private static extern int GetWindowText(IntPtr hWnd,
+            StringBuilder buffer, int length);
+        #endregion
 
         #region Variables
 
@@ -131,7 +145,31 @@ namespace GazeTrackerUI
 
         private void HandleHeadMovement(object sender, HeadMovementEventArgs e)
         {
-            // TODO: [EyeSpark] Implement this!
+            String gesture = e.Gesture;
+
+            // get window title
+            IntPtr handle = GetForegroundWindow();
+            int length = GetWindowTextLength(handle) + 1;
+            StringBuilder title = new StringBuilder(length);
+            GetWindowText(handle, title, title.Capacity);
+
+            // get processes
+            Process[] pl = Process.GetProcesses();
+            foreach (Process p in pl)
+            {
+                // find the process for the active window
+                if (p.MainWindowHandle == handle)
+                {
+                    Dictionary<String, String> map =
+                        Settings.Instance.HeadMovement.GetMapping(p.ProcessName);
+
+                    if (map != null)
+                    {
+                        String sequence = map[gesture];
+                        SendKeys.SendWait(sequence);
+                    }
+                }
+            }
         }
 
         #endregion

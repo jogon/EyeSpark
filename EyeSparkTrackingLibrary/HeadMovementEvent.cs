@@ -10,5 +10,18 @@ namespace EyeSparkTrackingLibrary
 
     public class HeadMovementEventArgs : EventArgs
     {
+        private string gesture;
+
+        public String Gesture
+        {
+            get 
+            {
+                return gesture;
+            }
+        }
+        public HeadMovementEventArgs(String gesture)
+        {
+            this.gesture = gesture;
+        }
     }
 }
