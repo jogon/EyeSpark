@@ -198,7 +198,7 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>KYp4Tws39KCw6loBKl3fChpw52A=</dsig:DigestValue>
+        <dsig:DigestValue>YQTBsOvl2HIFBwypn0hf9jX5dSc=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -239,14 +239,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="GazeTrackerUI.exe" size="793088">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="GazeTrackerUI.exe" size="793600">
       <assemblyIdentity name="GazeTrackerUI" version="2.1.0.0" language="neutral" processorArchitecture="x86" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>SQUS8aXOeXug0wSH9wld6af6F1M=</dsig:DigestValue>
+        <dsig:DigestValue>Z2qoCYvUK9Egtd50wgcMxLRO0ZA=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -258,7 +258,7 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>U8iziJaN2MoYk26I4TNv9jFTIrY=</dsig:DigestValue>
+        <dsig:DigestValue>OwqKz/kdU1TtA2RZum2tsIyp44o=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

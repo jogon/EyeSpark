@@ -131,6 +131,8 @@ namespace GazeTrackerUI.Mappings
         private void resetFields()
         {
             appComboBox.SelectedItem = selectedItem;
+            GetKeySequence();
+            cancelButton.Focus();
         }
 
         private void appComboBox_DropDownOpened(object sender, EventArgs e)
@@ -174,8 +176,10 @@ namespace GazeTrackerUI.Mappings
         {
             if (selectedItem != DefaultApplicationName)
             {
-
+                DataItem item = (DataItem)gesturesComboBox.SelectedItem;
+                selectedMap[(string)item.Value] = sequenceTextBox.Text;
                 Settings.Instance.HeadMovement.SaveMapping(selectedItem, selectedMap);
+                
                 CreateDummyMap();
 
                 MessageBox.Show("Saved");
@@ -184,11 +188,11 @@ namespace GazeTrackerUI.Mappings
 
         private void appComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            String item = (String)appComboBox.SelectedItem;
+            String appName = (String)appComboBox.SelectedItem;
 
-            if (item != null && !selectedItem.Equals(item))
+            if (appName != null && !selectedItem.Equals(appName))
             {
-                selectedItem = item;
+                selectedItem = appName;
                 selectedMap = dummyMap;
                 if (selectedItem != DefaultApplicationName)
                 {
@@ -199,8 +203,32 @@ namespace GazeTrackerUI.Mappings
                         selectedMap = map;
                     }
                 }
+                Console.WriteLine("reseting gesture");
+                if (gesturesComboBox.SelectedItem == defaultGesture)
+                {
+                    // force the fetching of a new sequence
+                    Console.WriteLine("forcing new key sequence");
 
-                gesturesComboBox.SelectedItem = defaultGesture;
+                    GetKeySequence();
+                }
+                else
+                {
+                    gesturesComboBox.SelectedItem = defaultGesture;
+                }
+
+                cancelButton.Focus();
+                //sequenceTextBox.SelectAll();
+            }
+        }
+
+        private void GetKeySequence()
+        {
+            DataItem gesture = (DataItem)gesturesComboBox.SelectedItem;
+            if (gesture != null)
+            {
+                Console.WriteLine("getting new key sequence");
+                keySequence = new KeySequence(selectedMap[(string)gesture.Value]);
+                sequenceTextBox.Text = keySequence.ToString();
             }
         }
 
@@ -213,6 +241,8 @@ namespace GazeTrackerUI.Mappings
             dummyMap.Add(Gesture.Yaw.Right, "");
             dummyMap.Add(Gesture.Roll.Left, "");
             dummyMap.Add(Gesture.Roll.Right, "");
+
+            selectedMap = dummyMap;
         }
 
         private void keyboardButton_MouseEnter(object sender, MouseEventArgs e)
@@ -258,13 +288,9 @@ namespace GazeTrackerUI.Mappings
 
         private void gesturesComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            //DataItem item = (DataItem)gesturesComboBox.SelectedItem;
-
-            //if (item != null)
-            //{
-            //    selectedGesture = (DataItem)item.Value;
-            //    keySequence = new KeySequence(selectedMap[(string)selectedGesture.Value]);
-            //}    
+            DataItem gesture = (DataItem)gesturesComboBox.SelectedItem;
+            GetKeySequence();
+            cancelButton.Focus();
         }
 
 
