@@ -15,7 +15,8 @@
     Height="371.904" Width="394" 
 	AllowsTransparency="True" WindowStyle="None" ResizeMode="NoResize" Background="{x:Null}"
     Loaded="OnLoad" Foreground="{x:Null}" WindowStartupLocation="CenterOwner"
-    Icon="/GazeTrackerUI;component/Graphics/eyespark.ico">
+    Icon="/GazeTrackerUI;component/Graphics/eyespark.ico"
+    Closing="Window_Closing">
 
   <Window.Resources>
     <ResourceDictionary>

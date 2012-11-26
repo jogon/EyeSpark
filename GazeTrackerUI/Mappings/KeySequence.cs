@@ -58,8 +58,6 @@ namespace GazeTrackerUI.Mappings
             String code;
             if (codes.TryGetValue(keyName, out code))
             {
-                sequence.Append(code);
-
                 if (lastKeyName.Count > 0 && !(CtrlFlag || AltFlag || ShiftFlag))
                 {
                     text.Append(",");
@@ -73,6 +71,7 @@ namespace GazeTrackerUI.Mappings
                             CtrlFlag = true;
                             text.Append("CTRL+");
                             lastKeyName.Push("CTRL");
+                            sequence.Append(code);
                         }
                         break;
                     case "+":
@@ -81,6 +80,7 @@ namespace GazeTrackerUI.Mappings
                             ShiftFlag = true;
                             text.Append("SHIFT+");
                             lastKeyName.Push("SHIFT");
+                            sequence.Append(code);
                         }
                         break;
                     case "%":
@@ -89,11 +89,13 @@ namespace GazeTrackerUI.Mappings
                             AltFlag = true;
                             text.Append("ALT+");
                             lastKeyName.Push("ALT");
+                            sequence.Append(code);
                         }
                         break;
                     default:
                         text.Append(keyName);
                         lastKeyName.Push(keyName);
+                        sequence.Append(code);
                         ClearFlags();
                         break;
                 }
@@ -146,7 +148,7 @@ namespace GazeTrackerUI.Mappings
 
         public override string ToString()
         {
-            return text.ToString();
+            return sequence.ToString();
         }
 
         private void LoadCodes()
@@ -249,6 +251,19 @@ namespace GazeTrackerUI.Mappings
             }
         }
 
+        public int Length
+        {
+            get {
+                return sequence.Length;
+            }
+        }
+
+        public String Text
+        {
+            get {
+                return text.ToString();
+            }
+        }
         public bool CtrlFlag { get; set; }
 
         public bool AltFlag { get; set; }

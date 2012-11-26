@@ -110,6 +110,15 @@ namespace GazeTrackerUI.SettingsUI
 
         }
 
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (sender.GetType() != typeof(GazeTrackerUIMainWindow))
+            {
+                e.Cancel = true;
+                Hide();
+            }
+        }
+
         public void ShowOrHideTabs(SettingsTabs shownTabs)
         {
             TabItemTracking.Visibility = Visibility.Collapsed;

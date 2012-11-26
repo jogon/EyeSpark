@@ -88,7 +88,6 @@ namespace GazeTrackerUI
 
         #endregion
 
-
         #region Constructor / Init methods
 
         public GazeTrackerUIMainWindow()

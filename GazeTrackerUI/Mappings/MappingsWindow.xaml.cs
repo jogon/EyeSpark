@@ -40,6 +40,7 @@ namespace GazeTrackerUI.Mappings
 
         #region Fields
         private static string DefaultApplicationName = "-None Selected-";
+        private const int MaxSequenceLength = 8;
 
         private static MappingsWindow instance;
 
@@ -229,7 +230,7 @@ namespace GazeTrackerUI.Mappings
             {
                 Console.WriteLine("getting new key sequence");
                 keySequence = new KeySequence(selectedMap[(string)gesture.Value]);
-                sequenceTextBox.Text = keySequence.ToString();
+                sequenceTextBox.Text = keySequence.Text;
             }
         }
 
@@ -282,8 +283,17 @@ namespace GazeTrackerUI.Mappings
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
-            keySequence.Append(e.Key.ToString());
-            sequenceTextBox.Text = keySequence.ToString();
+            if (keySequence.Length < MaxSequenceLength)
+            {
+                keySequence.Append(e.Key.ToString());
+                sequenceTextBox.Text = keySequence.Text;
+
+                if (keySequence.Length == MaxSequenceLength)
+                {
+                    sequenceTextBox.BorderBrush = Brushes.Red;
+                }                
+            }
+            Console.WriteLine(keySequence.ToString());
         }
 
         private void gesturesComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -307,6 +317,7 @@ namespace GazeTrackerUI.Mappings
         {
             keySequence.Clear();
             sequenceTextBox.Text = "";
+            sequenceTextBox.BorderBrush = Brushes.WhiteSmoke;
         }
 
         private void DragWindow(object sender, MouseButtonEventArgs args)
@@ -318,6 +329,17 @@ namespace GazeTrackerUI.Mappings
             catch (Exception)
             {
             }
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (sender.GetType() != typeof(GazeTrackerUIMainWindow))
+            {
+                e.Cancel = true;
+                Hide();
+            }
+            
+
         }
 
 
