@@ -64,11 +64,11 @@ namespace GazeTrackerUI.Mappings
                 {
                     text.Append(",");
                 }
-                
+
                 switch (code)
                 {
                     case "^":
-                        if(!CtrlFlag)
+                        if (!CtrlFlag)
                         {
                             CtrlFlag = true;
                             text.Append("CTRL+");
@@ -89,15 +89,19 @@ namespace GazeTrackerUI.Mappings
                             AltFlag = true;
                             text.Append("ALT+");
                             lastKeyName.Push("ALT");
-                        }                        
+                        }
                         break;
                     default:
                         text.Append(keyName);
                         lastKeyName.Push(keyName);
                         ClearFlags();
                         break;
-                }                
-                
+                }
+
+            }
+            else 
+            {
+                Console.WriteLine("Unrecognized Key: " + keyName);
             }
             return this;
         }
@@ -149,6 +153,7 @@ namespace GazeTrackerUI.Mappings
             if (codes == null)
             {
                 codes = new Dictionary<String, String>();
+
                 codes.Add(Key.LeftCtrl.ToString(), "^");
                 codes.Add(Key.RightCtrl.ToString(), "^");
                 codes.Add("CTRL", "^");
@@ -158,13 +163,87 @@ namespace GazeTrackerUI.Mappings
                 codes.Add(Key.LeftShift.ToString(), "+");
                 codes.Add(Key.RightShift.ToString(), "+");
                 codes.Add("SHIFT", "+");
+
                 codes.Add(Key.Left.ToString(), "{LEFT}");
                 codes.Add(Key.Right.ToString(), "{RIGHT}");
                 codes.Add(Key.Up.ToString(), "{UP}");
                 codes.Add(Key.Down.ToString(), "{DOWN}");
+
+                codes.Add(Key.Back.ToString(), "{BS}");
+                codes.Add(Key.Delete.ToString(), "{DEL}");
+                codes.Add(Key.CapsLock.ToString(), "{CAPSLOCK}");
+                codes.Add(Key.End.ToString(), "{END}");
+                codes.Add(Key.Enter.ToString(), "~");
+                codes.Add(Key.Escape.ToString(), "{ESC}");
+                codes.Add(Key.Help.ToString(), "{HELP}");
+                codes.Add(Key.Home.ToString(), "{HOME}");
+                codes.Add(Key.Insert.ToString(), "{INS}");
+                codes.Add(Key.NumLock.ToString(), "{HELP}");
+                codes.Add(Key.PageDown.ToString(), "{PGDN}");
+                codes.Add(Key.PageUp.ToString(), "{PGUP}");
+                codes.Add(Key.Scroll.ToString(), "{SCROLLOCK}");
+                codes.Add(Key.Tab.ToString(), "{TAB}");
+
+                codes.Add(Key.Add.ToString(), "{ADD}");
+                codes.Add(Key.Subtract.ToString(), "{SUBTRACT}");
+                codes.Add(Key.Multiply.ToString(), "{MULTIPLY}");
+                codes.Add(Key.Divide.ToString(), "{DIVIDE}");
+
+                codes.Add(Key.D0.ToString(), "0");
+                codes.Add(Key.D1.ToString(), "1");
+                codes.Add(Key.D2.ToString(), "2");
+                codes.Add(Key.D3.ToString(), "3");
+                codes.Add(Key.D4.ToString(), "4");
+                codes.Add(Key.D5.ToString(), "5");
+                codes.Add(Key.D6.ToString(), "6");
+                codes.Add(Key.D7.ToString(), "7");
+                codes.Add(Key.D8.ToString(), "8");
+                codes.Add(Key.D9.ToString(), "9");
+
+                codes.Add(Key.OemComma.ToString(), ",");
+                codes.Add(Key.OemPeriod.ToString(), ".");
+                codes.Add(Key.OemSemicolon.ToString(), ";");
+
+                codes.Add(Key.F1.ToString(), "{F1}");
+                codes.Add(Key.F2.ToString(), "{F2}");
+                codes.Add(Key.F3.ToString(), "{F3}");
+                codes.Add(Key.F4.ToString(), "{F4}");
+                codes.Add(Key.F5.ToString(), "{F5}");
+                codes.Add(Key.F6.ToString(), "{F6}");
+                codes.Add(Key.F7.ToString(), "{F7}");
+                codes.Add(Key.F8.ToString(), "{F8}");
+                codes.Add(Key.F9.ToString(), "{F9}");
+                codes.Add(Key.F10.ToString(), "{F10}");
+                codes.Add(Key.F11.ToString(), "{F11}");
+                codes.Add(Key.F12.ToString(), "{F12}");
+
                 codes.Add(Key.A.ToString(), "A");
                 codes.Add(Key.B.ToString(), "B");
                 codes.Add(Key.C.ToString(), "C");
+                codes.Add(Key.D.ToString(), "D");
+                codes.Add(Key.E.ToString(), "E");
+                codes.Add(Key.F.ToString(), "F");
+                codes.Add(Key.G.ToString(), "G");
+                codes.Add(Key.H.ToString(), "H");
+                codes.Add(Key.I.ToString(), "I");
+                codes.Add(Key.J.ToString(), "J");
+                codes.Add(Key.K.ToString(), "K");
+                codes.Add(Key.L.ToString(), "L");
+                codes.Add(Key.M.ToString(), "M");
+                codes.Add(Key.N.ToString(), "N");
+                codes.Add(Key.O.ToString(), "O");
+                codes.Add(Key.P.ToString(), "P");
+                codes.Add(Key.Q.ToString(), "Q");
+                codes.Add(Key.R.ToString(), "R");
+                codes.Add(Key.S.ToString(), "S");
+                codes.Add(Key.T.ToString(), "T");
+                codes.Add(Key.U.ToString(), "V");
+                codes.Add(Key.V.ToString(), "V");
+                codes.Add(Key.W.ToString(), "W");
+                codes.Add(Key.X.ToString(), "X");
+                codes.Add(Key.Y.ToString(), "Y");
+                codes.Add(Key.Z.ToString(), "Z");
+
 
             }
         }
