@@ -122,6 +122,7 @@ namespace GazeTrackerUI
             // Add menu to tray icon and show it.
             trayIcon.ContextMenu = trayMenu;
             trayIcon.DoubleClick += new EventHandler(ShowFromTray);
+            //HideToTray();
 
             #endregion
 

@@ -309,6 +309,17 @@ namespace GazeTrackerUI.Mappings
             sequenceTextBox.Text = "";
         }
 
+        private void DragWindow(object sender, MouseButtonEventArgs args)
+        {
+            try
+            {
+                DragMove();
+            }
+            catch (Exception)
+            {
+            }
+        }
+
 
 
     }

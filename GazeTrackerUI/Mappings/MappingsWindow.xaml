@@ -5,7 +5,7 @@
         Title="MappingsWindow" Height="200" Width="360" 
         WindowStartupLocation="CenterOwner"
         AllowsTransparency="True" WindowStyle="None" ResizeMode="NoResize" Background="{x:Null}" ContentRendered="Window_ContentRendered" KeyDown="Window_KeyDown" Icon="/GazeTrackerUI;component/Graphics/eyespark.ico">
-    <Grid>
+    <Grid MouseLeftButtonDown="DragWindow">
         <Rectangle Margin="0" RadiusX="4" RadiusY="4">
             <Rectangle.Fill>
                 <LinearGradientBrush EndPoint="0.52,0.432" StartPoint="0.522,0.017">
