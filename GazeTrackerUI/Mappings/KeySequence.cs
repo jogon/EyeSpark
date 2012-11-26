@@ -111,6 +111,7 @@ namespace GazeTrackerUI.Mappings
             sequence.Length = 0;
             text.Length = 0;
             lastKeyName.Clear();
+            ClearFlags();
         }
 
         private void ClearFlags()
