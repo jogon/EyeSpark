@@ -4,12 +4,17 @@ using System.Linq;
 using System.Text;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
+using System.Threading;
 
 namespace EyeSparkTrackingLibrary
 {
     public class HeadTracker
     {
         #region Fields
+        //Initialize HID Object with unique vendor_id and product_id.
+        //Paremeters must be all lowercase for some shitty reason.
+        static USBHIDDRIVER.USBInterface usb = new USBHIDDRIVER.USBInterface("vid_03eb", "pid_204f");
+
         private static HeadTracker instance;
         #endregion
 
@@ -29,6 +34,13 @@ namespace EyeSparkTrackingLibrary
                 return instance;
             }
         }
+
+        public bool Stop
+        {
+            get;
+            set;
+        }
+
         #endregion
 
         #region Events
@@ -37,57 +49,85 @@ namespace EyeSparkTrackingLibrary
 
         public void Start()
         {
-            System.Threading.Thread t = new System.Threading.Thread(StartThread);
+            Thread t = new Thread(StartThread);
+            t.Name = "Head Movement";
             t.Start();
-            //// do the tracking here
-
-            ////            while (true) 
-            ////            {
-            //// we should get a reference to the device
-            //// via the usb event.
-            //if ("DEVICE" != null)
-            //{
-            //    // get window title
-            //    IntPtr handle = GetForegroundWindow();
-            //    int length = GetWindowTextLength(handle) + 1;
-            //    StringBuilder title = new StringBuilder(length);
-            //    GetWindowText(handle, title, title.Capacity);
-
-            //    // get processes
-            //    Process[] pl = Process.GetProcesses();
-            //    foreach (Process p in pl)
-            //    {
-            //        // find the process for the active window
-            //        if (p.MainWindowHandle == handle)
-            //        {
-            //            //AppProfile profile;
-            //            //if (profiles.TryGetValue(p.ProcessName, out profile))
-            //            //{
-            //            //    string randGesture = gestures[random.Next(gestures.Length)];
-
-            //            //    // TODO: fire off an event and let the main window handle it
-            //            //    //SendKeys.SendWait(profile.GetGestureMapping(randGesture));
-
-            //            //}
-            //        }
-            //    }
-                //                }            
-    //        }
         }
 
         private void StartThread()
         {
-            //while (true)
-            //{
-            //    System.Threading.Thread.Sleep(100);
-            //    OnHeadMovement(new HeadMovementEventArgs(Gesture.Pitch.Up));
-            //}
+            usb.enableUsbBufferEvent(new System.EventHandler(OnHeadMovement));
+                        
+            while (!Stop)
+            {
+                // TODO: [EyeSpark] follow event based model 
+                // instead of this.
+                while (!usb.Connect())
+                {
+                    Thread.Sleep(1000);
+                }
+                Console.WriteLine("HeadTracker: Connected to USB");
+                usb.startRead();
+                while (true)
+                {
+                    if (!usb.Connect())
+                    {
+                        Console.WriteLine("HeadTracker: Connected to USB siezed");                        
+                        usb.stopRead(); // do I need to call this?
+                        break;
+                    }
+                    Thread.Sleep(1000);
+                }
+            }
         }
 
-        private void OnHeadMovement(HeadMovementEventArgs e) {
+        private void OnHeadMovement(object sender, EventArgs e) {
             if (HeadMovement != null)
             {
-                HeadMovement(this, e);
+                //////////////////////////////////////////////////////////////////////////////////////////////////
+                // Don't edit anything from HERE...
+                //////////////////////////////////////////////////////////////////////////////////////////////////
+                if (USBHIDDRIVER.USBInterface.usbBuffer.Count > 0)
+                {
+                    byte[] currentRecord = null;
+                    int counter = 0;
+                    while ((byte[])USBHIDDRIVER.USBInterface.usbBuffer[counter] == null)
+                    {
+                        //Remove this report from list
+                        lock (USBHIDDRIVER.USBInterface.usbBuffer.SyncRoot)
+                        {
+                            USBHIDDRIVER.USBInterface.usbBuffer.RemoveAt(0);
+                        }
+                    }
+                    //since the remove statement at the end of the loop take the first element
+                    currentRecord = (byte[])USBHIDDRIVER.USBInterface.usbBuffer[0];
+                    lock (USBHIDDRIVER.USBInterface.usbBuffer.SyncRoot)
+                    {
+                        USBHIDDRIVER.USBInterface.usbBuffer.RemoveAt(0);
+                    }
+
+                    //////////////////////////////////////////////////////////////////////////////////////////////////
+                    // ... to HERE.
+                    //////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+                    //////////////// Do stuff with record /////////////////////////
+                    Console.WriteLine("Record has [" + currentRecord.Length + "] bytes");
+
+                    for (int i = 1; i < currentRecord.Length; i++)
+                    {
+                        Console.WriteLine("Byte[" + i + "] =" + currentRecord[i]);
+                    }
+                    String gesture = "";
+                    
+                    /*
+                     * Something to get the proper gesture
+                     **/
+
+                    HeadMovement(this, new HeadMovementEventArgs(gesture));
+                    
+                    ////////////////// Done with record ///////////////////////////
+                }
             }
         }
     }

@@ -82,6 +82,8 @@ namespace GazeTrackerUI.Mappings
         private MappingsWindow()
         {
             CreateDummyMap();
+            selectedMap = dummyMap;
+
             InitializeComponent();
         }
         #endregion
@@ -241,7 +243,6 @@ namespace GazeTrackerUI.Mappings
             dummyMap.Add(Gesture.Roll.Left, "");
             dummyMap.Add(Gesture.Roll.Right, "");
 
-            selectedMap = dummyMap;
         }
 
         private void keyboardButton_MouseEnter(object sender, MouseEventArgs e)

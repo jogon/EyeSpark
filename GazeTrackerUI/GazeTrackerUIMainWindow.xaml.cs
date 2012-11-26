@@ -1009,6 +1009,7 @@ namespace GazeTrackerUI
         {
             #region EyeSpark specific code
             trayIcon.Visible = false;
+            HeadTracker.Instance.Stop = true; ;
             #endregion
 
             // Save settings 
