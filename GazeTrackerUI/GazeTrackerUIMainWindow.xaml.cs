@@ -1091,5 +1091,10 @@ namespace GazeTrackerUI
             MappingsWindow.Instance.Top = Top;
             MappingsWindow.Instance.Left = Left - MappingsWindow.Instance.Width - 5;
         }
+
+        private void ITUGazeTracker_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            AppClose(sender, e);
+        }
     }
 }

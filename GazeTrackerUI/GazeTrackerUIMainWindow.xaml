@@ -10,7 +10,7 @@
 	Title="EyeSpark v0.1"
 	WindowStyle="None" AllowsTransparency="False"
     WindowStartupLocation="CenterScreen"
-	Width="406" Height="348" ResizeMode="NoResize" Icon="/GazeTrackerUI;component/Graphics/eyespark.ico">
+	Width="406" Height="348" ResizeMode="NoResize" Icon="/GazeTrackerUI;component/Graphics/eyespark.ico" Closing="ITUGazeTracker_Closing">
 
 
     <Grid x:Name="LayoutRoot" Margin="0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="406" Height="340">
