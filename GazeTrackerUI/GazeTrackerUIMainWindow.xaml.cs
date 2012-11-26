@@ -83,7 +83,7 @@ namespace GazeTrackerUI
 
         private NotifyIcon trayIcon;
         private ContextMenu trayMenu;
-
+        private KeySequence keySequence = new KeySequence();
         #endregion
 
         #endregion
@@ -166,7 +166,7 @@ namespace GazeTrackerUI
                     if (map != null)
                     {
                         String sequence = map[gesture];
-                        SendKeys.SendWait(sequence);
+                        SendKeys.SendWait(keySequence.Parse(sequence));
                     }
                 }
             }

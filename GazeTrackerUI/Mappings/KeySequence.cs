@@ -25,10 +25,15 @@ namespace GazeTrackerUI.Mappings
 
             lastKeyName = new Stack<String>();
             text = new StringBuilder(t);
-            sequence = new StringBuilder(Parse(t));
+            sequence = new StringBuilder(Parse(t, true));
         }
 
         public String Parse(String text)
+        {
+            return Parse(text, false);
+        }
+
+        public String Parse(String text, bool persist)
         {
             StringBuilder sequence = new StringBuilder();
 
@@ -38,7 +43,10 @@ namespace GazeTrackerUI.Mappings
                 foreach (String token in tokens)
                 {
                     sequence.Append(codes[token]);
-                    lastKeyName.Push(token);
+                    if (persist)
+                    {
+                        lastKeyName.Push(token);
+                    }                    
                 }
             }            
 

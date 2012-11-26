@@ -13,13 +13,31 @@ namespace EyeSparkTrackingLibrary
         #region Fields
         //Initialize HID Object with unique vendor_id and product_id.
         //Paremeters must be all lowercase for some shitty reason.
-        static USBHIDDRIVER.USBInterface usb = new USBHIDDRIVER.USBInterface("vid_03eb", "pid_204f");
+        static USBHIDDRIVER.USBInterface usb = 
+            new USBHIDDRIVER.USBInterface("vid_03eb", "pid_204f");
 
         private static HeadTracker instance;
+        private String[] dataMap = new String[6];
+
+        private const byte PitchUp = 0;
+        private const byte PitchDown = 1;
+        private const byte RollLeft = 2;
+        private const byte RollRight = 3;
+        private const byte YawLeft = 4;
+        private const byte YawRight = 5;
+
         #endregion
 
         #region Constructor
-        private HeadTracker() { }
+        
+        private HeadTracker() {
+            dataMap[PitchUp] = Gesture.Pitch.Up;
+            dataMap[PitchDown] = Gesture.Pitch.Down;
+            dataMap[RollLeft] = Gesture.Roll.Left;
+            dataMap[RollRight] = Gesture.Roll.Right;
+            dataMap[YawLeft] = Gesture.Yaw.Left;
+            dataMap[YawRight] = Gesture.Yaw.Right;
+        }
         #endregion
 
         #region Properties
@@ -112,20 +130,14 @@ namespace EyeSparkTrackingLibrary
 
 
                     //////////////// Do stuff with record /////////////////////////
-                    Console.WriteLine("Record has [" + currentRecord.Length + "] bytes");
+                    //Console.WriteLine("Record has [" + currentRecord.Length + "] bytes");
 
-                    for (int i = 1; i < currentRecord.Length; i++)
+                    // Skip the first byte on purpose; it has special meaning
+                    if (currentRecord[1] >= 0 && currentRecord[1] < dataMap.Length)
                     {
-                        Console.WriteLine("Byte[" + i + "] =" + currentRecord[i]);
+                        HeadMovement(this, 
+                            new HeadMovementEventArgs(dataMap[currentRecord[1]]));
                     }
-                    String gesture = "";
-                    
-                    /*
-                     * Something to get the proper gesture
-                     **/
-
-                    HeadMovement(this, new HeadMovementEventArgs(gesture));
-                    
                     ////////////////// Done with record ///////////////////////////
                 }
             }
