@@ -7,11 +7,11 @@ using System.Windows;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("GazeTracker")]
-[assembly: AssemblyDescription("An open source eye tracker")]
+[assembly: AssemblyTitle("EyeSpark")]
+[assembly: AssemblyDescription("Processes head and eye movements sent by the EyeSpark device")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("ITU Copenhagen")]
-[assembly: AssemblyProduct("GazeTracker")]
+[assembly: AssemblyCompany("Simple Interactions")]
+[assembly: AssemblyProduct("EyeSpark")]
 [assembly: AssemblyCopyright("GPL")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
