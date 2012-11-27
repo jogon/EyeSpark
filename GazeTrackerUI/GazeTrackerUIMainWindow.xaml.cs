@@ -205,7 +205,11 @@ namespace GazeTrackerUI
             #region EyeSpark specific code
             HeadTracker.Instance.HeadMovement +=
                 new HeadMovementEventHandler(HandleHeadMovement);
-            HeadTracker.Instance.Start();
+            if (!HeadTracker.Instance.Start())
+            {
+                Console.WriteLine("WARNING: Failed to start head tracker");
+            }
+            HeadTracker.Instance.Calibrate();
             #endregion
             SettingsWindow.Instance.Title = "SettingsWindow"; // Just touch it..
 
@@ -1012,7 +1016,7 @@ namespace GazeTrackerUI
         {
             #region EyeSpark specific code
             trayIcon.Visible = false;
-            HeadTracker.Instance.Stop = true; ;
+            HeadTracker.Instance.Stop();
             #endregion
 
             // Save settings 

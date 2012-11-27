@@ -5,39 +5,56 @@ using System.Text;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 using System.Threading;
+using System.Timers;
 
 namespace EyeSparkTrackingLibrary
 {
     public class HeadTracker
     {
         #region Fields
-        //Initialize HID Object with unique vendor_id and product_id.
-        //Paremeters must be all lowercase for some shitty reason.
-        static USBHIDDRIVER.USBInterface usb = 
-            new USBHIDDRIVER.USBInterface("vid_03eb", "pid_204f");
 
+        private const Int16 MaxCalibrationSteps = 150;
+        private const Int16 DefaultThreshold = 10;
         private static HeadTracker instance;
-        private String[] dataMap = new String[6];
+        //private String[] dataMap = new String[6];
 
-        private const byte PitchUp = 0;
-        private const byte PitchDown = 1;
-        private const byte RollLeft = 2;
-        private const byte RollRight = 3;
-        private const byte YawLeft = 4;
-        private const byte YawRight = 5;
+        //private const byte PitchUp = 0;
+        //private const byte PitchDown = 1;
+        //private const byte RollLeft = 2;
+        //private const byte RollRight = 3;
+        //private const byte YawLeft = 4;
+        //private const byte YawRight = 5;
+
+        private String[] gestures;
+        private int calibrationCount = 0;
+        private Int16 originX = 0;
+        private Int16 originY = 0;
+        private Int16 originZ = 0;
+
+
+        #endregion
+
+        #region Events
+
+        public event HeadMovementEventHandler HeadMovement;
 
         #endregion
 
         #region Constructor
-        
-        private HeadTracker() {
-            dataMap[PitchUp] = Gesture.Pitch.Up;
-            dataMap[PitchDown] = Gesture.Pitch.Down;
-            dataMap[RollLeft] = Gesture.Roll.Left;
-            dataMap[RollRight] = Gesture.Roll.Right;
-            dataMap[YawLeft] = Gesture.Yaw.Left;
-            dataMap[YawRight] = Gesture.Yaw.Right;
+
+        private HeadTracker()
+        {
+            DoMeasure = true;
+            gestures = new String[]{
+                    Gesture.Yaw.Left,
+                    Gesture.Yaw.Right,
+                    Gesture.Pitch.Up,
+                    Gesture.Pitch.Down,
+                    Gesture.Roll.Right,
+                    Gesture.Roll.Left
+                };
         }
+
         #endregion
 
         #region Properties
@@ -53,112 +70,134 @@ namespace EyeSparkTrackingLibrary
             }
         }
 
-        public bool Stop
-        {
-            get;
-            set;
-        }
+        public bool Calibrating { get; set; }
+
+        public bool DoMeasure { get; set; }
 
         #endregion
 
-        #region Events
-        public event HeadMovementEventHandler HeadMovement;
-        #endregion
-
-        public void Start()
+        public bool Start()
         {
-            Thread t = new Thread(StartThread);
-            t.Name = "Head Movement";
-            t.Start();
+            //if (Hardware.Instance.Connected)
+            //{ 
+            //    Hardware.Instance.HeadMeasurement += OnHeadMeasurement;
+            //    Hardware.Instance.StartCommunication();
+            //    return true;
+            //}
+            //return false;
+            Hardware.Instance.HeadMeasurement += OnHeadMeasurement;
+            //Calibrate();
+
+            return Hardware.Instance.StartCommunication();
         }
 
-        private void StartThread()
+        public void Stop()
         {
-            usb.enableUsbBufferEvent(new System.EventHandler(OnHeadMovement));
-                        
-            while (!Stop)
+            Hardware.Instance.StopCommunication();
+        }
+
+        public void Calibrate()
+        {
+            Console.WriteLine("Begin Head Tracker Calibration");
+            Calibrating = true;
+            originX = 0;
+            originY = 0;
+            originZ = 0;
+            calibrationCount = 0;
+        }
+
+        private void OnHeadMeasurement(object sender, HeadMeasurementEventArgs e)
+        {
+            /*
+             * Process head measurements here
+             * 
+             * */
+            Int16 newX = e.X;
+            Int16 newY = e.Y;
+            Int16 newZ = e.Z;
+            
+
+            if (Calibrating)
             {
-                // TODO: [EyeSpark] follow event based model 
-                // instead of this.
-                while (!usb.Connect())
+                calibrationCount++;
+                originX = Math.Abs(newX - originX) > 5 ? newX : originX;
+                originY = Math.Abs(newY - originY) > 5 ? newY : originY;
+                originZ = Math.Abs(newZ - originZ) > 5 ? newZ : originZ;
+                //Console.WriteLine("oz: " + originZ);
+
+                if (calibrationCount == MaxCalibrationSteps)
                 {
-                    Thread.Sleep(1000);
-                }
-                Console.WriteLine("HeadTracker: Connected to USB");
-                usb.startRead();
-                while (true)
-                {
-                    if (!usb.Connect())
-                    {
-                        Console.WriteLine("HeadTracker: Connected to USB siezed");                        
-                        usb.stopRead(); // do I need to call this?
-                        break;
-                    }
-                    Thread.Sleep(1000);
+                    Console.WriteLine("Finished Calibration. x:{0} y :{1} z:{2}",
+                        originX, originY, originZ);
+                    Calibrating = false;
                 }
             }
-        }
-
-        private void OnHeadMovement(object sender, EventArgs e) {
-            if (HeadMovement != null)
+            else
             {
-                //////////////////////////////////////////////////////////////////////////////////////////////////
-                // Don't edit anything from HERE...
-                //////////////////////////////////////////////////////////////////////////////////////////////////
-                if (USBHIDDRIVER.USBInterface.usbBuffer.Count > 0)
+                Int16[] diff = new Int16[3];
+                diff[0] = (Int16)(newX - originX);
+                diff[1] = (Int16)(newY - originY);
+                diff[2] = (Int16)(newZ - originZ);
+
+                if (DoMeasure)
                 {
-                    byte[] currentRecord = null;
-                    int counter = 0;
-                    while ((byte[])USBHIDDRIVER.USBInterface.usbBuffer[counter] == null)
-                    {
-                        //Remove this report from list
-                        lock (USBHIDDRIVER.USBInterface.usbBuffer.SyncRoot)
+                    int max = FindMaxMagnitude(diff);
+                    if (Math.Abs(diff[max]) > DefaultThreshold)
+                    {                        
+                        DoMeasure = false;
+                        int index;
+                        if (diff[max] > 0)
                         {
-                            USBHIDDRIVER.USBInterface.usbBuffer.RemoveAt(0);
+                            index = 2 * max;
+                        }
+                        else
+                        {
+                            index = 2 * max + 1;
+
+                        }
+                        //eventQueue.Enqueue(new HeadMovementEventArgs(gestures[index]));
+                        Console.WriteLine("[{0}] Gesture detected: {1}.",
+                            Thread.CurrentThread.GetHashCode(), gestures[index]);
+                    }
+                }
+                else
+                {
+                    int i = 0;
+                    for (; i < diff.Length; i++)
+                    {
+                        if (Math.Abs(diff[i]) > DefaultThreshold)
+                        {
+                            break;
                         }
                     }
-                    //since the remove statement at the end of the loop take the first element
-                    currentRecord = (byte[])USBHIDDRIVER.USBInterface.usbBuffer[0];
-                    lock (USBHIDDRIVER.USBInterface.usbBuffer.SyncRoot)
+                    if (i == diff.Length)
                     {
-                        USBHIDDRIVER.USBInterface.usbBuffer.RemoveAt(0);
+                        DoMeasure = true;
                     }
-
-                    //////////////////////////////////////////////////////////////////////////////////////////////////
-                    // ... to HERE.
-                    //////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-                    //////////////// Do stuff with record /////////////////////////
-                    //Console.WriteLine("Record has [" + currentRecord.Length + "] bytes");
-
-                    // Skip the first byte on purpose; it has special meaning
-
-                    short data;
-
-                    data = 0;
-                    data += currentRecord[1];
-                    data += (short)(currentRecord[2] << 8);
-                    Console.WriteLine("x: " + data);
-
-                    data = 0;
-                    data += currentRecord[3];
-                    data += (short)(currentRecord[4] << 8);
-                    Console.WriteLine("y: " + data);
-
-                    data = 0;
-                    data += currentRecord[5];
-                    data += (short)(currentRecord[6] << 8);
-                    Console.WriteLine("z: " + data);
-                    
-                        //if (currentRecord[1] >= 0 && currentRecord[1] < dataMap.Length)
-                        //{
-                        //    HeadMovement(this,
-                        //        new HeadMovementEventArgs(dataMap[currentRecord[1]]));
-                        //}
-                    ////////////////// Done with record ///////////////////////////
                 }
             }
+        }
+
+        private void OnHeadMovement(HeadMovementEventArgs e)
+        {
+            if (HeadMovement != null)
+            {
+                HeadMovement(this, e);
+            }
+        }
+
+        private int FindMaxMagnitude(Int16[] a)
+        {
+            int current = 0;
+            for (int i = 1; i < a.Length; i++)
+            {
+                if (Math.Abs(a[i]) > Math.Abs(a[current]))
+                {
+                    current = i;
+                }
+            }
+            return current;
         }
     }
 }
+

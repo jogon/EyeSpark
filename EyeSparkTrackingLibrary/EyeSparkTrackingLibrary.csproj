@@ -46,7 +46,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Constants.cs" />
-    <Compile Include="HeadMovementEvent.cs" />
+    <Compile Include="Hardware.cs" />
+    <Compile Include="Events.cs" />
     <Compile Include="HeadTracker.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
