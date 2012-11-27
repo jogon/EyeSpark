@@ -177,6 +177,7 @@ namespace GazeTrackerUI
         private void GazeTrackerUIMainWindow_ContentRendered(object sender, EventArgs e)
         {
             // Load GTSettings
+            //ShowMessageNoCamera();
             Settings.Instance.LoadLatestConfiguration();
 
             // Camera initialization and start frame grabbing
@@ -602,9 +603,11 @@ namespace GazeTrackerUI
         private void ShowMessageNoCamera()
         {
             msgWindow = new MessageWindow();
-            msgWindow.Text = "The GazeTracker was unable to connect a camera. \n" +
-                             "Make sure that the device is connected and that the device drivers are installed. " +
-                             "Verified configurations can be found in our forum located at http://forum.gazegroup.org";
+            msgWindow.Text = "The application was unable to find the EyeSpark hardware device. \n" +
+                             "Make sure that the device is connected and that the device drivers are installed.";
+            //msgWindow.Text = "The GazeTracker was unable to connect a camera. \n" +
+            //                 "Make sure that the device is connected and that the device drivers are installed. " +
+            //                 "Verified configurations can be found in our forum located at http://forum.gazegroup.org";
             msgWindow.Show();
             ErrorLogger.WriteLine("Fatal error on startup, could not connect to a camera.");
             msgWindow.Closed += new EventHandler(msgWindowNoCamera_Closed);

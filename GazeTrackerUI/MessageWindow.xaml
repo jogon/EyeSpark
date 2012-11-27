@@ -9,7 +9,8 @@
     Background="Transparent"
 	WindowStyle="None" AllowsTransparency="True"
     WindowStartupLocation="CenterScreen"
-	Width="541" Height="312">
+	Width="541" Height="175">
+    <!-- Height="312"-->
 
 	<Grid x:Name="LayoutRoot">
 	
@@ -27,7 +28,7 @@
             	<Grid x:Name="GridTop" Margin="8,-3,5,0" VerticalAlignment="Top" Height="40.41">
 				
             		<Label Content="x" MouseDown="AppClose" Background="{x:Null}" FontFamily="Verdana" FontSize="18" Foreground="#FF989898" HorizontalAlignment="Right" x:Name="LabelCloseX" Width="Auto" Height="Auto" Margin="0,0.533,0,8" d:LayoutOverrides="Height" />
-            		<Label MouseLeftButtonDown="DragWindow" Background="#00FBFBFB" FontFamily="Lithos Pro" FontSize="18.667" Foreground="DarkGray" Margin="0,2.998,0,3.996" Height="Auto" Content="GT2" HorizontalAlignment="Center" x:Name="LabelTitle" d:LayoutOverrides="Height"/>
+            		<Label MouseLeftButtonDown="DragWindow" Background="#00FBFBFB" FontFamily="Lithos Pro" FontSize="18.667" Foreground="DarkGray" Margin="0,2.998,0,3.996" Height="Auto" Content="EyeSpark Device Not Detected" HorizontalAlignment="Center" x:Name="LabelTitle" d:LayoutOverrides="Height"/>
 		
             	</Grid>
 				
@@ -36,6 +37,7 @@
             		<Rectangle Fill="#D9161616" Stroke="#FF474747" RadiusX="2" RadiusY="2" Margin="0"/>
 					<TextBlock x:Name="TextBlockMessage" Foreground="White" TextWrapping="Wrap" Margin="8,8,8,3" FontSize="13.333"/>
             	</Grid>
+                <!--
             	<Grid Margin="8,155,8,8">
             		<Rectangle Fill="#D8161616" Stroke="#FF474747" RadiusX="2" RadiusY="2"/>
             		<TextBlock Margin="16,11,16,0" VerticalAlignment="Top" Height="67" Foreground="#FFAFAFAF" TextWrapping="Wrap" d:LayoutOverrides="VerticalAlignment" FontSize="10.667"><Run Text="The Gaze Tracker is a open source community driven effort continuously improving the platform. We hope that you will contribute your experience in our user community. "/><LineBreak/><Run Text=""/><LineBreak/><Run Text="Available resources:"/></TextBlock>
@@ -45,7 +47,7 @@
             			<GazeGUIVelocity:Button x:Name="BtnVideoInstruction" Action="VideoInstructions" Background="#FF343434" Foreground="Black" ActivationMethod="Mouse" Icon="Graphics/little_tv_256.png" Label="Videos" Height="65" VerticalAlignment="Center" Width="70"/>
             		</WrapPanel>
             	</Grid>
-		
+		        -->
 		</Grid>
 		
 	</Grid>

@@ -133,11 +133,29 @@ namespace EyeSparkTrackingLibrary
                     //Console.WriteLine("Record has [" + currentRecord.Length + "] bytes");
 
                     // Skip the first byte on purpose; it has special meaning
-                    if (currentRecord[1] >= 0 && currentRecord[1] < dataMap.Length)
-                    {
-                        HeadMovement(this, 
-                            new HeadMovementEventArgs(dataMap[currentRecord[1]]));
-                    }
+
+                    short data;
+
+                    data = 0;
+                    data += currentRecord[1];
+                    data += (short)(currentRecord[2] << 8);
+                    Console.WriteLine("x: " + data);
+
+                    data = 0;
+                    data += currentRecord[3];
+                    data += (short)(currentRecord[4] << 8);
+                    Console.WriteLine("y: " + data);
+
+                    data = 0;
+                    data += currentRecord[5];
+                    data += (short)(currentRecord[6] << 8);
+                    Console.WriteLine("z: " + data);
+                    
+                        //if (currentRecord[1] >= 0 && currentRecord[1] < dataMap.Length)
+                        //{
+                        //    HeadMovement(this,
+                        //        new HeadMovementEventArgs(dataMap[currentRecord[1]]));
+                        //}
                     ////////////////// Done with record ///////////////////////////
                 }
             }
