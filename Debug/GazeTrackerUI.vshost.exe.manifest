@@ -239,14 +239,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="GazeTrackerUI.exe" size="802816">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="GazeTrackerUI.exe" size="803328">
       <assemblyIdentity name="GazeTrackerUI" version="2.1.0.0" language="neutral" processorArchitecture="x86" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>7t5kJk/Ox1r8citVvtV9fvxQRr8=</dsig:DigestValue>
+        <dsig:DigestValue>+E8fGPzRvVnfZPfuu/CBtsNj2+g=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

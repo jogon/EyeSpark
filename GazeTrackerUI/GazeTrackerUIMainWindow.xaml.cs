@@ -58,6 +58,7 @@ namespace GazeTrackerUI
     public partial class GazeTrackerUIMainWindow
     {
         #region Imports
+       
         [DllImport("user32.dll")]
         private static extern IntPtr GetForegroundWindow();
 
@@ -67,6 +68,10 @@ namespace GazeTrackerUI
         [DllImport("user32.dll")]
         private static extern int GetWindowText(IntPtr hWnd,
             StringBuilder buffer, int length);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
+        public static extern void mouse_event(uint dwFlags, uint dx, uint dy, uint cButtons, uint dwExtraInfo);
+        
         #endregion
 
         #region Variables
@@ -80,6 +85,11 @@ namespace GazeTrackerUI
         // private Tracker tracker;
 
         #region EyeSpark specific code
+
+        private const uint MOUSEEVENTF_LEFTDOWN = 0x02;
+        private const uint MOUSEEVENTF_LEFTUP = 0x04;
+        private const uint MOUSEEVENTF_RIGHTDOWN = 0x08;
+        private const uint MOUSEEVENTF_RIGHTUP = 0x10;
 
         private NotifyIcon trayIcon;
         private ContextMenu trayMenu;
@@ -147,26 +157,37 @@ namespace GazeTrackerUI
         {
             String gesture = e.Gesture;
 
-            // get window title
-            IntPtr handle = GetForegroundWindow();
-            int length = GetWindowTextLength(handle) + 1;
-            StringBuilder title = new StringBuilder(length);
-            GetWindowText(handle, title, title.Capacity);
-
-            // get processes
-            Process[] pl = Process.GetProcesses();
-            foreach (Process p in pl)
+            if (gesture.Equals(Gesture.Pitch.Down))
             {
-                // find the process for the active window
-                if (p.MainWindowHandle == handle)
-                {
-                    Dictionary<String, String> map =
-                        Settings.Instance.HeadMovement.GetMapping(p.ProcessName);
+                // reserve this gesture for mouse clicks
+                uint x = (uint)System.Windows.Forms.Cursor.Position.X;
+                uint y = (uint)System.Windows.Forms.Cursor.Position.Y;
 
-                    if (map != null)
+                mouse_event(MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTUP, x, y, 0, 0 );
+            }
+            else
+            {
+                // get window title
+                IntPtr handle = GetForegroundWindow();
+                int length = GetWindowTextLength(handle) + 1;
+                StringBuilder title = new StringBuilder(length);
+                GetWindowText(handle, title, title.Capacity);
+
+                // get processes
+                Process[] pl = Process.GetProcesses();
+                foreach (Process p in pl)
+                {
+                    // find the process for the active window
+                    if (p.MainWindowHandle == handle)
                     {
-                        String sequence = map[gesture];
-                        SendKeys.SendWait(keySequence.Parse(sequence));
+                        Dictionary<String, String> map =
+                            Settings.Instance.HeadMovement.GetMapping(p.ProcessName);
+
+                        if (map != null)
+                        {
+                            String sequence = map[gesture];
+                            SendKeys.SendWait(keySequence.Parse(sequence));
+                        }
                     }
                 }
             }
