@@ -123,6 +123,10 @@ namespace GazeTrackerUI.Mappings
             gesturesComboBox.Items.Add(new DataItem("Yaw Right", Gesture.Yaw.Right));
 
             gesturesComboBox.SelectedItem = defaultGesture;
+
+            yawSlider.Value = Settings.Instance.HeadMovement.YawThreshold;
+            pitchSlider.Value = Settings.Instance.HeadMovement.PitchThreshold;
+            rollSlider.Value = Settings.Instance.HeadMovement.RollThreshold;
         }
 
         private void appComboBox_DropDownClosed(object sender, EventArgs e)
@@ -340,6 +344,31 @@ namespace GazeTrackerUI.Mappings
             }
             
 
+        }
+
+        private void yawSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (Visibility == Visibility.Visible)
+            {
+                Settings.Instance.HeadMovement.YawThreshold = (int)yawSlider.Value;
+            }
+            
+        }
+
+        private void rollSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (Visibility == Visibility.Visible)
+            {
+                Settings.Instance.HeadMovement.RollThreshold = (int)rollSlider.Value;
+            }
+        }
+
+        private void pitchSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (Visibility == Visibility.Visible)
+            {
+                Settings.Instance.HeadMovement.PitchThreshold = (int)pitchSlider.Value;
+            }
         }
 
 

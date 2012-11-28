@@ -6,6 +6,8 @@ using System.Runtime.InteropServices;
 using System.Diagnostics;
 using System.Threading;
 using System.Timers;
+using GTSettings;
+using System.ComponentModel;
 
 namespace EyeSparkTrackingLibrary
 {
@@ -13,19 +15,15 @@ namespace EyeSparkTrackingLibrary
     {
         #region Fields
 
-        private const Int16 MaxCalibrationSteps = 150;
-        private const Int16 DefaultThreshold = 10;
+        private const Int16 MaxCalibrationSteps = 15;
+        private const int YawIndex = 0;
+        private const int PitchIndex = 1;
+        private const int RollIndex = 2;
+
         private static HeadTracker instance;
-        //private String[] dataMap = new String[6];
-
-        //private const byte PitchUp = 0;
-        //private const byte PitchDown = 1;
-        //private const byte RollLeft = 2;
-        //private const byte RollRight = 3;
-        //private const byte YawLeft = 4;
-        //private const byte YawRight = 5;
-
+        
         private String[] gestures;
+        private int[] thresholds;
         private int calibrationCount = 0;
         private Int16 originX = 0;
         private Int16 originY = 0;
@@ -53,6 +51,15 @@ namespace EyeSparkTrackingLibrary
                     Gesture.Roll.Right,
                     Gesture.Roll.Left
                 };
+
+            thresholds = new int[3];
+            thresholds[YawIndex] = Settings.Instance.HeadMovement.YawThreshold;
+            thresholds[PitchIndex] = Settings.Instance.HeadMovement.PitchThreshold;
+            thresholds[RollIndex] = Settings.Instance.HeadMovement.RollThreshold;
+
+            Settings.Instance.HeadMovement.PropertyChanged+=
+                new System.ComponentModel.PropertyChangedEventHandler(
+                    HeadMovement_PropertyChanged);
         }
 
         #endregion
@@ -96,7 +103,7 @@ namespace EyeSparkTrackingLibrary
             Hardware.Instance.StopCommunication();
         }
 
-        public void Calibrate()
+        public void StartCalibration()
         {
             Console.WriteLine("Begin Head Tracker Calibration");
             Calibrating = true;
@@ -106,15 +113,49 @@ namespace EyeSparkTrackingLibrary
             calibrationCount = 0;
         }
 
+        public void StopCalibration() 
+        {
+            Calibrating = false;
+        }
+
+        public void HeadMovement_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            String propertyName = e.PropertyName;
+
+            if (propertyName.Equals("yawThreshold"))
+            {
+                
+                thresholds[YawIndex] =
+                    Settings.Instance.HeadMovement.YawThreshold;
+                Console.WriteLine("[HeadTraker.cs] Set {0} to {1}",
+                    propertyName, thresholds[YawIndex]);
+            }
+            else if (propertyName.Equals("pitchThreshold"))
+            {
+                thresholds[PitchIndex] =
+                    Settings.Instance.HeadMovement.PitchThreshold;
+                Console.WriteLine("[HeadTraker.cs] Set {0} to {1}",
+                    propertyName, thresholds[PitchIndex]);
+            }
+            else if (propertyName.Equals("rollThreshold"))
+            {
+                thresholds[RollIndex] =
+                    Settings.Instance.HeadMovement.RollThreshold;
+                Console.WriteLine("[HeadTraker.cs] Set {0} to {1}",
+                    propertyName, thresholds[RollIndex]);
+            }
+
+        }
+
         private void OnHeadMeasurement(object sender, HeadMeasurementEventArgs e)
         {
             /*
              * Process head measurements here
              * 
              * */
-            Int16 newX = e.X;
-            Int16 newY = e.Y;
-            Int16 newZ = e.Z;
+            Int16 newX = e.X; // yaw
+            Int16 newY = e.Y; // pitch
+            Int16 newZ = e.Z; // roll
             
 
             if (Calibrating)
@@ -142,7 +183,7 @@ namespace EyeSparkTrackingLibrary
                 if (DoMeasure)
                 {
                     int max = FindMaxMagnitude(diff);
-                    if (Math.Abs(diff[max]) > DefaultThreshold)
+                    if (Math.Abs(diff[max]) > thresholds[max])
                     {                        
                         DoMeasure = false;
                         int index;
@@ -156,8 +197,8 @@ namespace EyeSparkTrackingLibrary
 
                         }
                         //eventQueue.Enqueue(new HeadMovementEventArgs(gestures[index]));
-                        Console.WriteLine("[{0}] Gesture detected: {1}.",
-                            Thread.CurrentThread.GetHashCode(), gestures[index]);
+                        Console.WriteLine("[{0}] Gesture detected: {1}. Moved {2} from origin.",
+                            Thread.CurrentThread.GetHashCode(), gestures[index], diff[max]);
                     }
                 }
                 else
@@ -165,7 +206,7 @@ namespace EyeSparkTrackingLibrary
                     int i = 0;
                     for (; i < diff.Length; i++)
                     {
-                        if (Math.Abs(diff[i]) > DefaultThreshold)
+                        if (Math.Abs(diff[i]) > thresholds[i])
                         {
                             break;
                         }

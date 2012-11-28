@@ -3,14 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Xml;
+using System.ComponentModel;
 
 namespace GTSettings
 {
-    public class HeadMovement
+    public class HeadMovement : INotifyPropertyChanged
     {
         public const string Name = "HeadMovementSettings";
+        private const int DefaultThreshold = 8;
+
         private Dictionary<string, Dictionary<string, string>> mappings;
-       
+        private int yawThreshold = DefaultThreshold;
+        private int pitchThreshold = DefaultThreshold;
+        private int rollThreshold = DefaultThreshold;
+
         #region Constructor
         public HeadMovement()
         {
@@ -46,6 +52,14 @@ namespace GTSettings
         public void WriteConfigFile(XmlTextWriter xmlWriter)
         {
             xmlWriter.WriteStartElement(Name);
+
+            xmlWriter.WriteStartElement("Sensitivity");
+
+            Settings.WriteElement(xmlWriter, "YawThreshold", YawThreshold + "");
+            Settings.WriteElement(xmlWriter, "PitchThreshold", PitchThreshold + "");
+            Settings.WriteElement(xmlWriter, "RollThreshold", RollThreshold + "");
+
+            xmlWriter.WriteEndElement();
             foreach (String appName in mappings.Keys)
             {
                 xmlWriter.WriteStartElement("Mapping");
@@ -63,13 +77,24 @@ namespace GTSettings
 
                 xmlWriter.WriteEndElement();
             }
-
+            
             xmlWriter.WriteEndElement();
             
         }
 
         public void LoadConfigFile(XmlReader xmlReader)
         {
+            if (xmlReader.ReadToFollowing("Sensitivity"))
+            {
+                xmlReader.ReadToFollowing("YawThreshold");
+                YawThreshold = Convert.ToInt32(xmlReader.ReadString());
+
+                xmlReader.ReadToFollowing("PitchThreshold");
+                PitchThreshold = Convert.ToInt32(xmlReader.ReadString());
+
+                xmlReader.ReadToFollowing("RollThreshold");
+                RollThreshold = Convert.ToInt32(xmlReader.ReadString());
+            }      
             while (xmlReader.ReadToFollowing("Mapping"))
             {
                 XmlReader mapReader = xmlReader.ReadSubtree();
@@ -87,8 +112,52 @@ namespace GTSettings
                     map.Add(gesture, mapReader.ReadString());
                 }
                 mappings.Add(appName, map);
-            }            
+            }
         }
+
         #endregion
+
+        #region Properties
+        
+        public int YawThreshold {
+            get { return yawThreshold; }
+            set
+            {
+                yawThreshold = value;
+                OnPropertyChanged("yawThreshold");
+            } 
+        }
+
+        public int PitchThreshold
+        {
+            get { return pitchThreshold; }
+            set
+            {
+                pitchThreshold = value;
+                OnPropertyChanged("pitchThreshold");
+            }
+        }
+
+        public int RollThreshold
+        {
+            get { return rollThreshold; }
+            set
+            {
+                rollThreshold = value;
+                OnPropertyChanged("rollThreshold");
+            }
+        }
+
+        #endregion
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void OnPropertyChanged(string parameter)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(parameter));
+            }
+        }
     }
 }

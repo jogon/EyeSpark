@@ -209,7 +209,7 @@ namespace GazeTrackerUI
             {
                 Console.WriteLine("WARNING: Failed to start head tracker");
             }
-            HeadTracker.Instance.Calibrate();
+            HeadTracker.Instance.StartCalibration();
             #endregion
             SettingsWindow.Instance.Title = "SettingsWindow"; // Just touch it..
 

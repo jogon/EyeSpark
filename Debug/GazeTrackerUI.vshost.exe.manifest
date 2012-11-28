@@ -191,14 +191,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="EyeSparkTrackingLibrary.dll" size="9728">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="EyeSparkTrackingLibrary.dll" size="11264">
       <assemblyIdentity name="EyeSparkTrackingLibrary" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>gc1npwLfODsX7AMCTHQb20BfaL8=</dsig:DigestValue>
+        <dsig:DigestValue>K4rSBiXDt7+qwc26R6GQDGqWujY=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -239,14 +239,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="GazeTrackerUI.exe" size="797184">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="GazeTrackerUI.exe" size="802816">
       <assemblyIdentity name="GazeTrackerUI" version="2.1.0.0" language="neutral" processorArchitecture="x86" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>8rqKEj7u4gSqmSiTvaqVEXE2EOc=</dsig:DigestValue>
+        <dsig:DigestValue>kE3g1YtpnAZErztKhJ+gAZyTmPw=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -258,7 +258,7 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>Zsinskgt/yq1BBizBTRByUp/ggQ=</dsig:DigestValue>
+        <dsig:DigestValue>tXVS5MSV1Ba2eKx6r2+AtLqO678=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -287,14 +287,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="GTSettings.dll" size="70656">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="GTSettings.dll" size="71680">
       <assemblyIdentity name="GTSettings" version="2.1.0.0" publicKeyToken="D1FDB187D7E10584" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>VJ3QZN5R6oo8A8ZaZaYKSk6s+U8=</dsig:DigestValue>
+        <dsig:DigestValue>+rO8ioloJK38a8U+vD/TNXlaf7s=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
