@@ -39,15 +39,25 @@ namespace EyeSparkTrackingLibrary
                 return usb.Connect();
             }
         }
+
+        private bool FirstTime
+        {
+            get;
+            set;
+        }
+
         #endregion
 
         public bool StartCommunication() 
         {
             if (Connected)
             {
-                usb.enableUsbBufferEvent(
-                    new System.EventHandler(OnDataAvailable));
-
+                if (FirstTime) {
+                    FirstTime = false;
+                    // only hook up one event handler
+                    usb.enableUsbBufferEvent(
+                        new System.EventHandler(OnDataAvailable));
+                }
                 usb.startRead();
                 return true;
             }
@@ -129,6 +139,7 @@ namespace EyeSparkTrackingLibrary
         {
             // Try and connect on init.
             usb.Connect();
+            FirstTime = true;
         }
     }
 }

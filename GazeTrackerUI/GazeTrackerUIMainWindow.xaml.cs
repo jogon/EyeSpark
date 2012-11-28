@@ -203,14 +203,23 @@ namespace GazeTrackerUI
             //tracker = new Tracker(GTCommands.Instance); // Hook up commands and events to tracker
 
             #region EyeSpark specific code
-            HeadTracker.Instance.HeadMovement +=
-                new HeadMovementEventHandler(HandleHeadMovement);
-            if (!HeadTracker.Instance.Start())
+
+            if (HeadTracker.Instance.ConnectToDevice())
+            {
+                HeadTracker.Instance.HeadMovement +=
+                    new HeadMovementEventHandler(HandleHeadMovement);
+
+                // TODO: [EyeSpark] consider removing
+                HeadTracker.Instance.Start();
+            }
+            else 
             {
                 Console.WriteLine("WARNING: Failed to start head tracker");
+                //this.AppClose();
             }
-            HeadTracker.Instance.StartCalibration();
+  
             #endregion
+
             SettingsWindow.Instance.Title = "SettingsWindow"; // Just touch it..
 
 
@@ -289,11 +298,18 @@ namespace GazeTrackerUI
 
                 #endregion
 
+                #region EyeSpark specific code
+
+                HeadTracker.Instance.Start();
+
+                #endregion
+
                 BtnStartStop.Label = "Stop";
 
                 //if(Settings.Instance.Processing.EyeMouseEnabled)
                 //    BtnStartStop.ActivationMethod = "Dwell";
 
+   
 
                 isRunning = true;
             }
@@ -336,6 +352,12 @@ namespace GazeTrackerUI
 
                 if (Tracker.Instance.LogData.IsEnabled)
                     Tracker.Instance.LogData.IsEnabled = false; // Will stop and close filestream
+
+                #endregion
+
+                #region EyeSpark specific code
+
+                HeadTracker.Instance.Stop();
 
                 #endregion
 
@@ -529,6 +551,7 @@ namespace GazeTrackerUI
 
         private void Calibrate(object sender, RoutedEventArgs e)
         {
+            HeadTracker.Instance.StartCalibration();
             GTCommands.Instance.Calibration.Start();
             videoImageControl.VideoOverlayTopMost = false;
         }
@@ -554,6 +577,7 @@ namespace GazeTrackerUI
             this.videoImageControl.VideoOverlayTopMost = true;
 
             Tracker.Instance.CalibrationAccepted();
+            HeadTracker.Instance.StopCalibration();
         }
 
         private void OnPointStart(object sender, RoutedEventArgs e)
@@ -584,6 +608,7 @@ namespace GazeTrackerUI
         private void OnCalibrationEnd(object sender, RoutedEventArgs e)
         {
             Tracker.Instance.CalibrationEnd();
+            Console.WriteLine("Calibration ended");
         }
 
 

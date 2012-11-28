@@ -220,32 +220,32 @@ namespace GazeTrackerUI.Mappings
                 codes.Add(Key.F11.ToString(), "{F11}");
                 codes.Add(Key.F12.ToString(), "{F12}");
 
-                codes.Add(Key.A.ToString(), "A");
-                codes.Add(Key.B.ToString(), "B");
-                codes.Add(Key.C.ToString(), "C");
-                codes.Add(Key.D.ToString(), "D");
-                codes.Add(Key.E.ToString(), "E");
-                codes.Add(Key.F.ToString(), "F");
-                codes.Add(Key.G.ToString(), "G");
-                codes.Add(Key.H.ToString(), "H");
-                codes.Add(Key.I.ToString(), "I");
-                codes.Add(Key.J.ToString(), "J");
-                codes.Add(Key.K.ToString(), "K");
-                codes.Add(Key.L.ToString(), "L");
-                codes.Add(Key.M.ToString(), "M");
-                codes.Add(Key.N.ToString(), "N");
-                codes.Add(Key.O.ToString(), "O");
-                codes.Add(Key.P.ToString(), "P");
-                codes.Add(Key.Q.ToString(), "Q");
-                codes.Add(Key.R.ToString(), "R");
-                codes.Add(Key.S.ToString(), "S");
-                codes.Add(Key.T.ToString(), "T");
-                codes.Add(Key.U.ToString(), "V");
-                codes.Add(Key.V.ToString(), "V");
-                codes.Add(Key.W.ToString(), "W");
-                codes.Add(Key.X.ToString(), "X");
-                codes.Add(Key.Y.ToString(), "Y");
-                codes.Add(Key.Z.ToString(), "Z");
+                codes.Add(Key.A.ToString(), "a");
+                codes.Add(Key.B.ToString(), "b");
+                codes.Add(Key.C.ToString(), "c");
+                codes.Add(Key.D.ToString(), "d");
+                codes.Add(Key.E.ToString(), "e");
+                codes.Add(Key.F.ToString(), "f");
+                codes.Add(Key.G.ToString(), "g");
+                codes.Add(Key.H.ToString(), "h");
+                codes.Add(Key.I.ToString(), "i");
+                codes.Add(Key.J.ToString(), "j");
+                codes.Add(Key.K.ToString(), "k");
+                codes.Add(Key.L.ToString(), "l");
+                codes.Add(Key.M.ToString(), "m");
+                codes.Add(Key.N.ToString(), "n");
+                codes.Add(Key.O.ToString(), "o");
+                codes.Add(Key.P.ToString(), "p");
+                codes.Add(Key.Q.ToString(), "q");
+                codes.Add(Key.R.ToString(), "r");
+                codes.Add(Key.S.ToString(), "s");
+                codes.Add(Key.T.ToString(), "t");
+                codes.Add(Key.U.ToString(), "u");
+                codes.Add(Key.V.ToString(), "v");
+                codes.Add(Key.W.ToString(), "w");
+                codes.Add(Key.X.ToString(), "x");
+                codes.Add(Key.Y.ToString(), "y");
+                codes.Add(Key.Z.ToString(), "z");
 
 
             }

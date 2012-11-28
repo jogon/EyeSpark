@@ -52,14 +52,27 @@ namespace EyeSparkTrackingLibrary
                     Gesture.Roll.Left
                 };
 
+            //gestures = new String[]{
+            //        Gesture.Roll.Right,
+            //        Gesture.Roll.Left,
+            //        Gesture.Yaw.Left,
+            //        Gesture.Yaw.Right,
+            //        Gesture.Pitch.Up,
+            //        Gesture.Pitch.Down
+            //    };
+
             thresholds = new int[3];
             thresholds[YawIndex] = Settings.Instance.HeadMovement.YawThreshold;
             thresholds[PitchIndex] = Settings.Instance.HeadMovement.PitchThreshold;
             thresholds[RollIndex] = Settings.Instance.HeadMovement.RollThreshold;
 
+            Hardware.Instance.HeadMeasurement += OnHeadMeasurement;
+            
             Settings.Instance.HeadMovement.PropertyChanged+=
                 new System.ComponentModel.PropertyChangedEventHandler(
                     HeadMovement_PropertyChanged);
+
+            Calibrating = true;
         }
 
         #endregion
@@ -77,7 +90,7 @@ namespace EyeSparkTrackingLibrary
             }
         }
 
-        public bool Calibrating { get; set; }
+        private bool Calibrating { get; set; }
 
         public bool DoMeasure { get; set; }
 
@@ -92,7 +105,7 @@ namespace EyeSparkTrackingLibrary
             //    return true;
             //}
             //return false;
-            Hardware.Instance.HeadMeasurement += OnHeadMeasurement;
+            
             //Calibrate();
 
             return Hardware.Instance.StartCommunication();
@@ -103,6 +116,11 @@ namespace EyeSparkTrackingLibrary
             Hardware.Instance.StopCommunication();
         }
 
+        public bool ConnectToDevice()
+        {
+            return Hardware.Instance.Connected;
+        }
+
         public void StartCalibration()
         {
             Console.WriteLine("Begin Head Tracker Calibration");
@@ -111,11 +129,19 @@ namespace EyeSparkTrackingLibrary
             originY = 0;
             originZ = 0;
             calibrationCount = 0;
+
+            // problematic if thread not started previously
         }
 
         public void StopCalibration() 
         {
             Calibrating = false;
+            originX = (Int16)(originX / calibrationCount);
+            originY = (Int16)(originY / calibrationCount);
+            originZ = (Int16)(originZ / calibrationCount);
+
+            Console.WriteLine("Finished Calibration. x:{0} y :{1} z:{2}",
+                        originX, originY, originZ);
         }
 
         public void HeadMovement_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -160,18 +186,21 @@ namespace EyeSparkTrackingLibrary
 
             if (Calibrating)
             {
+                originX += newX;
+                originY += newY;
+                originZ += newZ;
                 calibrationCount++;
-                originX = Math.Abs(newX - originX) > 5 ? newX : originX;
-                originY = Math.Abs(newY - originY) > 5 ? newY : originY;
-                originZ = Math.Abs(newZ - originZ) > 5 ? newZ : originZ;
-                //Console.WriteLine("oz: " + originZ);
+                //originX = Math.Abs(newX - originX) > 5 ? newX : originX;
+                //originY = Math.Abs(newY - originY) > 5 ? newY : originY;
+                //originZ = Math.Abs(newZ - originZ) > 5 ? newZ : originZ;
+                ////Console.WriteLine("oz: " + originZ);
 
-                if (calibrationCount == MaxCalibrationSteps)
-                {
-                    Console.WriteLine("Finished Calibration. x:{0} y :{1} z:{2}",
-                        originX, originY, originZ);
-                    Calibrating = false;
-                }
+//                if (calibrationCount == MaxCalibrationSteps)
+//                {
+//                    Console.WriteLine("Finished Calibration. x:{0} y :{1} z:{2}",
+//                        originX, originY, originZ);
+//                    Calibrating = false;
+//                }
             }
             else
             {
@@ -196,9 +225,11 @@ namespace EyeSparkTrackingLibrary
                             index = 2 * max + 1;
 
                         }
-                        //eventQueue.Enqueue(new HeadMovementEventArgs(gestures[index]));
+                        
                         Console.WriteLine("[{0}] Gesture detected: {1}. Moved {2} from origin.",
                             Thread.CurrentThread.GetHashCode(), gestures[index], diff[max]);
+
+                        OnHeadMovement(new HeadMovementEventArgs(gestures[index]));
                     }
                 }
                 else
