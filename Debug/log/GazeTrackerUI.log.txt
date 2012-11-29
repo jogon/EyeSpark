@@ -1,0 +1,6 @@
+2012-11-28 08:51:43,836 [10] DEBUG GTHardware.Cameras.Thorlabs.ThorlabCamera - IsConnected: Attempting to retrieve list of connected UC480 cameras...
+2012-11-28 08:51:43,883 [10] INFO  GTHardware.Cameras.Thorlabs.ThorlabCamera - IsConnected: Detected no UC480 camera(s) - ThorlabCamera.IsConnected will return 'false', i.e. No Thorlabs detected
+2012-11-28 08:51:44,102 [10] INFO  GazeTrackingLibrary.Tracker - Constructing Tracker...
+2012-11-28 08:51:44,195 [10] INFO  GazeTrackingLibrary.Tracker - Looking up LoggingEnabled in FileSettings
+2012-11-28 08:51:44,195 [10] INFO  GazeTrackingLibrary.Tracker - Setting RecalibrationAvailableHandler
+2012-11-28 08:51:44,195 [10] INFO  GazeTrackingLibrary.Tracker - Completed constructing Tracker
