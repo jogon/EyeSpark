@@ -15,7 +15,7 @@ namespace EyeSparkTrackingLibrary
     {
         #region Fields
 
-        private const Int16 MaxCalibrationSteps = 15;
+        private const Int16 MaxCalibrationCount = 10;
         private const int YawIndex = 0;
         private const int PitchIndex = 1;
         private const int RollIndex = 2;
@@ -44,10 +44,10 @@ namespace EyeSparkTrackingLibrary
         {
             DoMeasure = true;
             gestures = new String[]{
-                    Gesture.Yaw.Left,
                     Gesture.Yaw.Right,
-                    Gesture.Pitch.Up,
+                    Gesture.Yaw.Left,
                     Gesture.Pitch.Down,
+                    Gesture.Pitch.Up,
                     Gesture.Roll.Right,
                     Gesture.Roll.Left
                 };
@@ -93,6 +93,10 @@ namespace EyeSparkTrackingLibrary
         private bool Calibrating { get; set; }
 
         public bool DoMeasure { get; set; }
+
+        public Int16 OriginX { get { return originX; } }
+        public Int16 OriginY { get { return originY; } }
+        public Int16 OriginZ { get { return originZ; } }
 
         #endregion
 
@@ -195,12 +199,10 @@ namespace EyeSparkTrackingLibrary
                 //originZ = Math.Abs(newZ - originZ) > 5 ? newZ : originZ;
                 ////Console.WriteLine("oz: " + originZ);
 
-//                if (calibrationCount == MaxCalibrationSteps)
-//                {
-//                    Console.WriteLine("Finished Calibration. x:{0} y :{1} z:{2}",
-//                        originX, originY, originZ);
-//                    Calibrating = false;
-//                }
+                if (calibrationCount == MaxCalibrationCount)
+                {
+                    StopCalibration();
+                }
             }
             else
             {
@@ -229,7 +231,7 @@ namespace EyeSparkTrackingLibrary
                         Console.WriteLine("[{0}] Gesture detected: {1}. Moved {2} from origin.",
                             Thread.CurrentThread.GetHashCode(), gestures[index], diff[max]);
 
-                        OnHeadMovement(new HeadMovementEventArgs(gestures[index]));
+                        OnHeadMovement(new HeadMovementEventArgs(gestures[index],newX,newY,newZ));
                     }
                 }
                 else

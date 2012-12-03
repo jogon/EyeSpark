@@ -572,7 +572,7 @@ namespace GazeTrackerUI
 
         private void Calibrate(object sender, RoutedEventArgs e)
         {
-            HeadTracker.Instance.StartCalibration();
+        //    HeadTracker.Instance.StartCalibration();
             GTCommands.Instance.Calibration.Start();
             videoImageControl.VideoOverlayTopMost = false;
         }
@@ -598,7 +598,7 @@ namespace GazeTrackerUI
             this.videoImageControl.VideoOverlayTopMost = true;
 
             Tracker.Instance.CalibrationAccepted();
-            HeadTracker.Instance.StopCalibration();
+         //   HeadTracker.Instance.StopCalibration();
         }
 
         private void OnPointStart(object sender, RoutedEventArgs e)
@@ -624,6 +624,7 @@ namespace GazeTrackerUI
         {
             CalibrationWindow.Instance.Stop();
             Tracker.Instance.CalibrationAbort();
+        //    HeadTracker.Instance.StopCalibration();
         }
 
         private void OnCalibrationEnd(object sender, RoutedEventArgs e)

@@ -15,6 +15,9 @@ namespace EyeSparkTrackingLibrary
     public class HeadMovementEventArgs : EventArgs
     {
         private string gesture;
+        private short dx;
+        private short dy;
+        private short dz;
 
         public String Gesture
         {
@@ -23,10 +26,21 @@ namespace EyeSparkTrackingLibrary
                 return gesture;
             }
         }
-        public HeadMovementEventArgs(String gesture)
+
+        public HeadMovementEventArgs(string p, short newX, short newY, short newZ)
         {
-            this.gesture = gesture;
+            // TODO: Complete member initialization
+            gesture = p;
+            dx = newX;
+            dy = newY;
+            dz = newZ;
         }
+
+        public Int16 DeltaX { get { return dx; } set { dx = value; } }
+
+        public Int16 DeltaY { get { return dy; } set { dy = value; } }
+
+        public Int16 DeltaZ { get { return dz; } set { dz = value; } }
     }
 
     public class HeadMeasurementEventArgs : EventArgs

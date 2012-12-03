@@ -127,6 +127,30 @@ namespace GazeTrackerUI.Mappings
             yawSlider.Value = Settings.Instance.HeadMovement.YawThreshold;
             pitchSlider.Value = Settings.Instance.HeadMovement.PitchThreshold;
             rollSlider.Value = Settings.Instance.HeadMovement.RollThreshold;
+
+            Hardware.Instance.HeadMeasurement +=new HeadMeasurementEventHandler(Instance_HeadMeasurement);
+            HeadTracker.Instance.HeadMovement +=new HeadMovementEventHandler(Instance_HeadMovement);
+        }
+
+        private void Instance_HeadMeasurement(object sender, HeadMeasurementEventArgs e)
+        {
+            this.Dispatcher.Invoke((Action)(() =>
+            {
+                HeadTracker tracker = HeadTracker.Instance;
+                this.yawOffsetLabel.Content = e.X - tracker.OriginX;
+                this.pitchOffsetLabel.Content = e.Y - tracker.OriginY;
+                this.rollOffsetLabel.Content = e.Z - tracker.OriginZ;
+            }));
+
+        }
+
+        private void Instance_HeadMovement(object sender, HeadMovementEventArgs e)
+        {
+            this.Dispatcher.Invoke((Action)(() =>
+            {
+                this.detectionTextBox.Text = e.Gesture;
+            }));
+            
         }
 
         private void appComboBox_DropDownClosed(object sender, EventArgs e)
@@ -369,6 +393,11 @@ namespace GazeTrackerUI.Mappings
             {
                 Settings.Instance.HeadMovement.PitchThreshold = (int)pitchSlider.Value;
             }
+        }
+
+        private void Recalibrate(object sender, RoutedEventArgs e)
+        {
+            HeadTracker.Instance.StartCalibration();  
         }
 
 

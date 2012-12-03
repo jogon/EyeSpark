@@ -191,14 +191,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="EyeSparkTrackingLibrary.dll" size="11264">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="EyeSparkTrackingLibrary.dll" size="11776">
       <assemblyIdentity name="EyeSparkTrackingLibrary" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>Rio2KNiDbHZwWjwyjimeLzI6lcw=</dsig:DigestValue>
+        <dsig:DigestValue>e/QFDmxzyPZO6NnZdMdO1Ndvbqo=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -239,14 +239,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="GazeTrackerUI.exe" size="803328">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="GazeTrackerUI.exe" size="806400">
       <assemblyIdentity name="GazeTrackerUI" version="2.1.0.0" language="neutral" processorArchitecture="x86" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>1aBsKlOBiFOvedpaU05h0U9TsHI=</dsig:DigestValue>
+        <dsig:DigestValue>yN5/ye5XpDJDXRgWGU8RQweFr6E=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -258,7 +258,7 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>tXVS5MSV1Ba2eKx6r2+AtLqO678=</dsig:DigestValue>
+        <dsig:DigestValue>ikdeHmAR0bqPvLBGmfvMKePSQLg=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

@@ -87,6 +87,22 @@
                     <Label Background="#00FFFFFF" Content="50" FontSize="12" Foreground="#FFC3C3C3" Height="28" HorizontalAlignment="Left" Margin="192,119,0,0" Name="label15" VerticalAlignment="Top" />
                 </Grid>
             </TabItem>
+
+            <!-- Calibration -->
+
+            <TabItem Style="{StaticResource GTTabItem}" x:Name="TabItemCalibration" Header="Calibration" Margin="-1,0,0,0" Width="77" Height="Auto" HorizontalAlignment="Left" FontSize="10.667">
+                <Grid x:Name="GridCalibration" Width="376" Margin="10,5,10,6.5">
+                    <Label Content="Yaw Offset" Height="28" Foreground="#FFC3C3C3" FontSize="12" Background="#00FFFFFF" HorizontalAlignment="Left" Margin="18,16,0,0" Name="label16" VerticalAlignment="Top" />
+                    <Label Background="#00FFFFFF" Content="Pitch Offset" FontSize="12" Foreground="#FFC3C3C3" HorizontalAlignment="Left" Margin="150,16,0,86" Name="label17" />
+                    <Label Background="#00FFFFFF" Content="Roll Offset" FontSize="12" Foreground="#FFC3C3C3" Height="28" HorizontalAlignment="Left" Margin="292,16,0,0" Name="label18" VerticalAlignment="Top" />
+                    <Label Background="#00FFFFFF" Content="0" FontSize="12" Foreground="#FFC3C3C3" Height="28" HorizontalAlignment="Left" Margin="43,39,0,0" Name="yawOffsetLabel" VerticalAlignment="Top" />
+                    <Label Background="#00FFFFFF" Content="0" FontSize="12" Foreground="#FFC3C3C3" Height="28" HorizontalAlignment="Left" Margin="315,38,0,0" Name="pitchOffsetLabel" VerticalAlignment="Top" />
+                    <Label Background="#00FFFFFF" Content="0" FontSize="12" Foreground="#FFC3C3C3" Height="28" HorizontalAlignment="Left" Margin="173,38,0,0" Name="rollOffsetLabel" VerticalAlignment="Top" />
+                    <Label Background="#00FFFFFF" Content="Detected Gesture" FontSize="12" Foreground="#FFC3C3C3" Height="28" HorizontalAlignment="Left" Margin="5,72,0,0" Name="label19" VerticalAlignment="Top" />
+                    <TextBox Height="23" FontSize="12" Background="#80202020" Foreground="#FFC9C9C9" BorderBrush="WhiteSmoke" Margin="111,73,19,0" Name="detectionTextBox" VerticalAlignment="Top" IsReadOnly="True" />
+                    <GazeGUIVelocity:Button ActivationMethod="Mouse" Background="#E5242424" Foreground="{x:Null}" Height="38" Label="Recalibrate" Margin="282,102,19,-10" MinHeight="38" MinWidth="75" Name="recalibrateButton" Width="75" Action="Recalibrate" />
+                </Grid>
+            </TabItem>
         </TabControl>
     </Grid>
 </Window>
